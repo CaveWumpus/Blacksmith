@@ -1,6 +1,5 @@
 using UnityEngine;
 
-public enum DropType { Ore, Gem, Relic }
 
 [CreateAssetMenu(fileName = "NewMineableDrop", menuName = "Mine/MineableDrop")]
 public class MineableDrop : ScriptableObject

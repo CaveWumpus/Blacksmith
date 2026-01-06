@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26eeaf03aaf663440a8a5420756b7d14, type: 3}
   m_Name: HardRockTileDef
   m_EditorClassIdentifier: Assembly-CSharp::TileDefinition
+  tileName: 
   category: 2
   tileAsset: {fileID: 11400000, guid: 8a5ca1a7509fc42489718bc32eae4c8a, type: 2}
   spawnChance: 0.4
+  fixedDurability: 4
+  randomDurabilityRange: {x: 0, y: 0}
+  unlockLevel: 1

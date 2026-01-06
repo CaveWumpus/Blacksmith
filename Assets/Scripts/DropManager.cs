@@ -1,61 +1,73 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+
 
 public class DropManager : MonoBehaviour
 {
     public static DropManager Instance;
 
     [Header("Drop Pools")]
-    public MineableDrop[] ores;
-    public MineableDrop[] gems;
-    public MineableDrop[] relics;
+    public List<MineableDrop> oreDrops;
+    public List<MineableDrop> gemDrops;
+    public List<MineableDrop> relicDrops;
 
     void Awake()
     {
         Instance = this;
     }
 
-    // --- Category-based selection ---
-    public MineableDrop GetDropForCategory(TileCategory category, int playerLevel)
+    /// <summary>
+    /// Get a random drop of a specific type, filtered by player level.
+    /// </summary>
+    public MineableDrop GetDropForType(DropType type, int playerLevel)
     {
-        switch (category)
+        List<MineableDrop> candidates = new List<MineableDrop>();
+
+        switch (type)
         {
-            case TileCategory.OreVein:
-            case TileCategory.SoftRock:
-            case TileCategory.HardRock:
-                return GetRandomOre(playerLevel);
+            case DropType.Ore:
+                foreach (var d in oreDrops)
+                    if (d.unlockLevel <= playerLevel) candidates.Add(d);
+                break;
 
-            case TileCategory.GemVein:
-                return GetRandomGem(playerLevel);
+            case DropType.Gem:
+                foreach (var d in gemDrops)
+                    if (d.unlockLevel <= playerLevel) candidates.Add(d);
+                break;
 
-            case TileCategory.RelicVein:
-                return GetRandomRelic(playerLevel);
+            case DropType.Relic:
+                foreach (var d in relicDrops)
+                    if (d.unlockLevel <= playerLevel) candidates.Add(d);
+                break;
 
             default:
                 return null;
         }
+
+        if (candidates.Count == 0) return null;
+
+        return candidates[Random.Range(0, candidates.Count)];
     }
 
-    // --- Ore pool ---
-    public MineableDrop GetRandomOre(int playerLevel)
+    /// <summary>
+    /// Get a random drop from any category, filtered by player level.
+    /// </summary>
+    public MineableDrop GetDrop(int playerLevel)
     {
-        var candidates = ores.Where(o => o.unlockLevel <= playerLevel).ToList();
-        return candidates.Count > 0 ? candidates[Random.Range(0, candidates.Count)] : null;
-    }
+        List<MineableDrop> candidates = new List<MineableDrop>();
 
-    // --- Gem pool ---
-    public MineableDrop GetRandomGem(int playerLevel)
-    {
-        var candidates = gems.Where(g => g.unlockLevel <= playerLevel).ToList();
-        return candidates.Count > 0 ? candidates[Random.Range(0, candidates.Count)] : null;
-    }
+        foreach (var d in oreDrops)
+            if (d.unlockLevel <= playerLevel) candidates.Add(d);
 
-    // --- Relic pool ---
-    public MineableDrop GetRandomRelic(int playerLevel)
-    {
-        var candidates = relics.Where(r => r.unlockLevel <= playerLevel).ToList();
-        return candidates.Count > 0 ? candidates[Random.Range(0, candidates.Count)] : null;
+        foreach (var d in gemDrops)
+            if (d.unlockLevel <= playerLevel) candidates.Add(d);
+
+        foreach (var d in relicDrops)
+            if (d.unlockLevel <= playerLevel) candidates.Add(d);
+
+        if (candidates.Count == 0) return null;
+
+        return candidates[Random.Range(0, candidates.Count)];
     }
 }
-   
+ 
