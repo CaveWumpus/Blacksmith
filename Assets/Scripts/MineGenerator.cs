@@ -63,8 +63,13 @@ public class MineGenerator : MonoBehaviour
         }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Step 4: Carve entrance room
         bool startOnLeft = Random.value < 0.5f;
+=======
+        // Step 3: Carve entrance room
+        startOnLeft = Random.value < 0.5f;
+>>>>>>> Stashed changes
 =======
         // Step 3: Carve entrance room
         startOnLeft = Random.value < 0.5f;
@@ -172,6 +177,9 @@ public class MineGenerator : MonoBehaviour
 
                         // Assign durability + drop
                         TileDurabilityManager.Instance.AssignDrop(cellPos, drop, chosen);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                     }
                 }
@@ -215,6 +223,9 @@ public class MineGenerator : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     private IEnumerator SpawnNextFrame()
     {
