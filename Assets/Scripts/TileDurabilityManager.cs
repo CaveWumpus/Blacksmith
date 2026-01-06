@@ -6,47 +6,53 @@ public class TileDurabilityManager : MonoBehaviour
 {
     public static TileDurabilityManager Instance;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     // Track durability per cell position
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
     [Header("Vein Pools")]
     public TilePool oreVeinPool;
     public TilePool gemVeinPool;
     public TilePool relicVeinPool;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
+
+    [Header("Durability Settings")]
+    public int defaultRockDurability = 3; // hits required for rocks
+    public int veinDurability = 2;        // hits required for ore/gem veins
+    public int relicDurability = 1;       // hits required for relics
+
+    [Header("Vein Tiles")]
+    public TileBase oreVeinTile;
+    public TileBase gemVeinTile;
+    public TileBase relicVeinTile;
+
+    // Track durability and drops per cell
+
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
+    private Dictionary<Vector3Int, MineableDrop> dropMap = new Dictionary<Vector3Int, MineableDrop>();
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        Instance = this;
     }
 
     /// <summary>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     /// Damage a tile at a given cell position.
     /// </summary>
-    public void Damage(Vector3Int cellPos, Tilemap tilemap, int maxDurability, GameObject dropPrefab = null)
+    public void AssignDrop(Vector3Int cellPos, MineableDrop drop)
     {
-        // Initialize durability if not tracked yet
+        if (drop == null) return;
+        dropMap[cellPos] = drop;
+        durabilityMap[cellPos] = defaultRockDurability;
+    }
+
+    /// <summary>
+    /// Damage a tile at the given cell position.
+    /// </summary>
+    public void Damage(Vector3Int cellPos, Tilemap tilemap)
+    {
         if (!durabilityMap.ContainsKey(cellPos))
         {
-            durabilityMap[cellPos] = maxDurability;
+            durabilityMap[cellPos] = defaultRockDurability;
         }
 =======
     /// Assign durability from TileDefinition (rock or vein).
@@ -58,13 +64,12 @@ public class TileDurabilityManager : MonoBehaviour
     /// </summary>
     public void AssignDrop(Vector3Int cellPos, MineableDrop drop, TileDefinition def)
     {
->>>>>>> Stashed changes
-=======
+
     /// Assign durability from TileDefinition (rock or vein).
     /// </summary>
     public void AssignDrop(Vector3Int cellPos, MineableDrop drop, TileDefinition def)
     {
->>>>>>> Stashed changes
+
         if (drop != null) dropMap[cellPos] = drop;
 
         if (def.randomDurabilityRange.x > 0 || def.randomDurabilityRange.y > 0)
@@ -84,18 +89,11 @@ public class TileDurabilityManager : MonoBehaviour
     public void Damage(Vector3Int cellPos, Tilemap tilemap)
     {
         if (!durabilityMap.ContainsKey(cellPos)) return;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
-        // Reduce durability
+
         durabilityMap[cellPos]--;
         Debug.Log($"[Damage] Cell {cellPos} hit. Remaining durability: {durabilityMap[cellPos]}");
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         Debug.Log($"Damaged tile at {cellPos}, remaining HP: {durabilityMap[cellPos]}");
 
         // If durability reaches zero, break the tile
@@ -159,7 +157,7 @@ public class TileDurabilityManager : MonoBehaviour
             }
         }
 
->>>>>>> Stashed changes
+
         if (durabilityMap.ContainsKey(cellPos) && durabilityMap[cellPos] <= 0)
         {
             BreakTile(cellPos, tilemap);
@@ -173,17 +171,12 @@ public class TileDurabilityManager : MonoBehaviour
     /// </summary>
     private void BreakTile(Vector3Int cellPos, Tilemap tilemap)
     {
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
         if (dropMap.ContainsKey(cellPos))
         {
             MineableDrop drop = dropMap[cellPos];
             TileBase currentTile = tilemap.GetTile(cellPos);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
             // Ore/Gem veins: add item each hit
             if (IsVeinTile(currentTile) && (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem))
             {
@@ -206,53 +199,72 @@ public class TileDurabilityManager : MonoBehaviour
         }
 
         if (durabilityMap.ContainsKey(cellPos) && durabilityMap[cellPos] <= 0)
->>>>>>> Stashed changes
+
         {
-            BreakTile(cellPos, tilemap, dropPrefab);
+            BreakTile(cellPos, tilemap);
         }
     }
 
-<<<<<<< Updated upstream
     private void BreakTile(Vector3Int cellPos, Tilemap tilemap, GameObject dropPrefab)
     {
-        // Remove tile
-        tilemap.SetTile(cellPos, null);
-        durabilityMap.Remove(cellPos);
-
-        // Spawn drop if assigned
-        if (dropPrefab != null)
-        {
-            Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
-            Instantiate(dropPrefab, worldPos, Quaternion.identity);
-        }
-
-        Debug.Log($"Tile at {cellPos} destroyed!");
-=======
-    /// <summary>
-    /// Handles breaking a tile:
-    /// Rocks: reveal vein tile only.
-    /// Veins: clear tile when durability reaches 0.
-    /// </summary>
-    private void BreakTile(Vector3Int cellPos, Tilemap tilemap)
-    {
+        // If this cell has a drop assigned
         if (dropMap.ContainsKey(cellPos))
         {
             MineableDrop drop = dropMap[cellPos];
-            TileBase currentTile = tilemap.GetTile(cellPos);
+            dropMap.Remove(cellPos);
 
-            // Rock breaking: reveal vein, no inventory add
-            if (IsRockTile(currentTile))
+            // If the tile is still a rock, reveal vein
+            if (tilemap.GetTile(cellPos) != null &&
+                (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem || drop.dropType == DropType.Relic))
             {
+                TileBase veinTile = GetVeinTileForDrop(drop);
+                tilemap.SetTile(cellPos, veinTile);
+
+                // Reset durability for vein
+                if (drop.dropType == DropType.Relic)
+                    durabilityMap[cellPos] = relicDurability;
+                else
+                    durabilityMap[cellPos] = veinDurability;
+
+                // Store drop again so vein knows what to spawn
+                dropMap[cellPos] = drop;
+                return;
+            }
+
+            // If the tile is already a vein, spawn resources
+            Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
+            tilemap.SetTile(cellPos, null);
+            durabilityMap.Remove(cellPos);
+
+            if (drop.dropType == DropType.Relic)
+            {
+                if (drop.prefab != null)
+                    Instantiate(drop.prefab, worldPos, Quaternion.identity);
+            }
+            else
+            {
+                int hits = Random.Range(drop.minHits, drop.maxHits + 1);
+                for (int i = 0; i < hits; i++)
+                {
+                    if (drop.prefab != null)
+                        Instantiate(drop.prefab, worldPos, Quaternion.identity);
+                }
+            }
+        }
+        else
+        {
+            // No drop assigned: just clear tile
+            tilemap.SetTile(cellPos, null);
+            durabilityMap.Remove(cellPos);
+        }
+    }
+
+        Debug.Log($"Tile at {cellPos} destroyed!");
 =======
             // Rock breaking: reveal vein, no inventory add
             if (IsRockTile(currentTile))
             {
->>>>>>> Stashed changes
-=======
-            // Rock breaking: reveal vein, no inventory add
-            if (IsRockTile(currentTile))
-            {
->>>>>>> Stashed changes
+
                 Debug.Log($"[BreakTile] Rock at {cellPos} destroyed, revealing vein of type {drop.dropType}");
 
                 if (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem || drop.dropType == DropType.Relic)
@@ -296,7 +308,7 @@ public class TileDurabilityManager : MonoBehaviour
             case DropType.Relic: return relicVeinPool.GetRandomTileDefinition();
             default: return null;
         }
->>>>>>> Stashed changes
+
     }
 
     private bool IsRockTile(TileBase tile)
@@ -327,5 +339,16 @@ public class TileDurabilityManager : MonoBehaviour
     private bool IsVeinTile(TileBase tile)
     {
         return tile != null && tile.name.Contains("Vein");
+=======
+    private TileBase GetVeinTileForDrop(MineableDrop drop)
+    {
+        switch (drop.dropType)
+        {
+            case DropType.Ore: return oreVeinTile;
+            case DropType.Gem: return gemVeinTile;
+            case DropType.Relic: return relicVeinTile;
+            default: return null;
+        }
+
     }
 }

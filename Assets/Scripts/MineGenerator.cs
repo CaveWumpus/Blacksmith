@@ -10,12 +10,12 @@ public class MineGenerator : MonoBehaviour
     public Tilemap tilemap;
 
     [Header("Tiles")]
-    public Tile groundTile;     // unmineable
-    public Tile softRockTile;   // mineable
-    public Tile hardRockTile;   // mineable
+    public Tile groundTile; // perimeter walls
+    public TilePool rockPool; // pool of rock tiles (SoftRock, HardRock, etc.)
 
     [Header("Player")]
     public Transform player;
+    public int playerLevel = 1; // progression level
 
     private bool[,] grid;
     private Vector2 spawnPoint;
@@ -40,17 +40,7 @@ public class MineGenerator : MonoBehaviour
             }
         }
 
-        // Step 2: Carve random interior caves
-        //for (int x = 1; x < width - 1; x++)
-        //{
-            //for (int y = 1; y < height - 1; y++)
-            //{
-                //if (Random.value > 0.55f)
-                    //grid[x, y] = false; // empty space
-            //}
-        //}
-
-        // Step 3: Enforce perimeter walls
+        // Step 2: Enforce perimeter walls
         for (int x = 0; x < width; x++)
         {
             grid[x, 0] = true;
@@ -62,23 +52,18 @@ public class MineGenerator : MonoBehaviour
             grid[width - 1, y] = true;
         }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         // Step 4: Carve entrance room
         bool startOnLeft = Random.value < 0.5f;
 =======
         // Step 3: Carve entrance room
         startOnLeft = Random.value < 0.5f;
->>>>>>> Stashed changes
-=======
+
         // Step 3: Carve entrance room
         startOnLeft = Random.value < 0.5f;
->>>>>>> Stashed changes
-=======
+
         // Step 3: Carve entrance room
         startOnLeft = Random.value < 0.5f;
->>>>>>> Stashed changes
+
         startX = startOnLeft ? 1 : width - 5;
         startY = Random.Range(height / 3, (height * 2) / 3);
 
@@ -90,19 +75,19 @@ public class MineGenerator : MonoBehaviour
             }
         }
 
-        // Step 5: Keep perimeter open at entrance
+        // Step 4: Keep perimeter open at entrance
         if (startOnLeft)
         {
             for (int y = startY; y < startY + 4; y++)
-                grid[0, y] = false; // open left edge
+                grid[0, y] = false;
         }
         else
         {
             for (int y = startY; y < startY + 4; y++)
-                grid[width - 1, y] = false; // open right edge
+                grid[width - 1, y] = false;
         }
 
-        // Step 6: Guaranteed tunnel carve into interior
+        // Step 5: Guaranteed tunnel carve into interior
         int tunnelLength = 6;
         if (startOnLeft)
         {
@@ -110,7 +95,7 @@ public class MineGenerator : MonoBehaviour
             {
                 for (int y = startY + 1; y < startY + 3; y++)
                 {
-                    grid[startX + x, y] = false; // carve horizontal tunnel
+                    grid[startX + x, y] = false;
                 }
             }
         }
@@ -120,7 +105,7 @@ public class MineGenerator : MonoBehaviour
             {
                 for (int y = startY + 1; y < startY + 3; y++)
                 {
-                    grid[startX - x, y] = false; // carve horizontal tunnel
+                    grid[startX - x, y] = false;
                 }
             }
         }
@@ -128,13 +113,13 @@ public class MineGenerator : MonoBehaviour
         // Save spawn point in center of room
         spawnPoint = new Vector2(startX + 2.5f, startY + 2.5f);
 
-        // Step 7: Render grid to Tilemap
+        // Step 6: Render grid to Tilemap
         RenderGridToTilemap();
 
-        // Step 8: Refresh colliders
+        // Step 7: Refresh colliders
         tilemap.RefreshAllTiles();
 
-        // Step 9: Spawn player safely
+        // Step 8: Spawn player safely
         if (player != null)
         {
             StartCoroutine(SpawnNextFrame());
@@ -160,7 +145,6 @@ public class MineGenerator : MonoBehaviour
                     }
                     else
                     {
-<<<<<<< Updated upstream
                         // Interior walls: mostly mineable, sprinkle ground occasionally
                         float roll = Random.value;
                         if (roll < 0.1f)
@@ -169,7 +153,6 @@ public class MineGenerator : MonoBehaviour
                             tilemap.SetTile(cellPos, softRockTile);
                         else
                             tilemap.SetTile(cellPos, hardRockTile);
-=======
                         // Pick a rock tile from the pool
                         TileDefinition chosen = GetRandomTileDefinition();
                         tilemap.SetTile(cellPos, chosen.tileAsset);
@@ -182,26 +165,26 @@ public class MineGenerator : MonoBehaviour
 
                         // Assign durability + drop
                         TileDurabilityManager.Instance.AssignDrop(cellPos, drop, chosen);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
+
+                        // Assign hidden drop (ore/gem/relic) to this rock tile
+                        MineableDrop drop = DropManager.Instance.GetDropForCategory(chosen.category, playerLevel);
+                        if (drop != null)
+                        {
+                            TileDurabilityManager.Instance.AssignDrop(cellPos, drop);
+                        }
+
                     }
                 }
                 else
                 {
-                    // Empty space (including entrance + tunnel)
+                    // Empty space (entrance + tunnel)
                     tilemap.SetTile(cellPos, null);
                 }
             }
         }
     }
 
-<<<<<<< Updated upstream
-=======
     private TileDefinition GetRandomTileDefinition()
     {
         float totalWeight = 0f;
@@ -231,17 +214,11 @@ public class MineGenerator : MonoBehaviour
         }
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
     private IEnumerator SpawnNextFrame()
     {
         yield return null;
         player.position = spawnPoint;
-        player.GetComponent<Rigidbody2D>().freezeRotation = true; // prevent diagonal shooting
+        player.GetComponent<Rigidbody2D>().freezeRotation = true;
     }
 }

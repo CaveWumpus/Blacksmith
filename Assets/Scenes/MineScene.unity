@@ -318,24 +318,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7815edcea0589a54daeb6ae47d2cf7d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileDurabilityManager
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 =======
   oreVeinPool: {fileID: 11400000, guid: 261afbb6abf33484ba91f0488b53c95e, type: 2}
   gemVeinPool: {fileID: 11400000, guid: 251278e55e5de6840aec748b0197c4a8, type: 2}
   relicVeinPool: {fileID: 0}
->>>>>>> Stashed changes
+
 =======
   oreVeinPool: {fileID: 11400000, guid: 261afbb6abf33484ba91f0488b53c95e, type: 2}
   gemVeinPool: {fileID: 11400000, guid: 251278e55e5de6840aec748b0197c4a8, type: 2}
   relicVeinPool: {fileID: 0}
->>>>>>> Stashed changes
+
 =======
-  oreVeinPool: {fileID: 11400000, guid: 261afbb6abf33484ba91f0488b53c95e, type: 2}
-  gemVeinPool: {fileID: 11400000, guid: 251278e55e5de6840aec748b0197c4a8, type: 2}
-  relicVeinPool: {fileID: 0}
->>>>>>> Stashed changes
+  defaultRockDurability: 3
+  veinDurability: 2
+  relicDurability: 1
+  oreVeinTile: {fileID: 0}
+  gemVeinTile: {fileID: 0}
+  relicVeinTile: {fileID: 0}
+
 --- !u!4 &89599811
 Transform:
   m_ObjectHideFlags: 0
@@ -384,9 +384,9 @@ MonoBehaviour:
   height: 100
   tilemap: {fileID: 1697666467}
   groundTile: {fileID: 11400000, guid: 8d946f7fa3319af41bac7619a936fd0e, type: 2}
-  softRockTile: {fileID: 11400000, guid: dee15d79a3d29e6439ca661afa532d93, type: 2}
-  hardRockTile: {fileID: 11400000, guid: 8a5ca1a7509fc42489718bc32eae4c8a, type: 2}
+  rockPool: {fileID: 11400000, guid: 0bb113713fb74f74b9210c6630486c6f, type: 2}
   player: {fileID: 2073496269}
+  playerLevel: 1
 --- !u!4 &376650375
 Transform:
   m_ObjectHideFlags: 0
@@ -1085,7 +1085,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1543498443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2136,14 +2136,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 --- !u!114 &1971991063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2238,7 +2230,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
->>>>>>> Stashed changes
 --- !u!1 &2073496264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2565,6 +2556,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1032952139223285096, guid: 1b5835dca32098d48b85ff390bd07166, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7866627625856582011, guid: 1b5835dca32098d48b85ff390bd07166, type: 3}
       propertyPath: m_Material
       value: 
@@ -2633,6 +2628,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MiningIndicator
       objectReference: {fileID: 0}
+    - target: {fileID: 1664603531623245974, guid: 09c8e52bdcf5a6f479f03bb4a5bcf6ae, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7208778794943192895, guid: 09c8e52bdcf5a6f479f03bb4a5bcf6ae, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5052
@@ -2694,16 +2693,6 @@ SceneRoots:
   - {fileID: 1809892162}
   - {fileID: 1805409859}
   - {fileID: 993681375}
-<<<<<<< Updated upstream
-=======
+
   - {fileID: 2047534948}
-  - {fileID: 597676906}
-  - {fileID: 1348416079}
-  - {fileID: 557370858}
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
