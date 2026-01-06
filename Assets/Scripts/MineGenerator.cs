@@ -20,6 +20,7 @@ public class MineGenerator : MonoBehaviour
     private bool[,] grid;
     private Vector2 spawnPoint;
     private int startX, startY;
+    private bool startOnLeft;
 
     void Start()
     {
@@ -35,7 +36,7 @@ public class MineGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                grid[x, y] = true; // solid by default
+                grid[x, y] = true;
             }
         }
 
@@ -61,8 +62,13 @@ public class MineGenerator : MonoBehaviour
             grid[width - 1, y] = true;
         }
 
+<<<<<<< Updated upstream
         // Step 4: Carve entrance room
         bool startOnLeft = Random.value < 0.5f;
+=======
+        // Step 3: Carve entrance room
+        startOnLeft = Random.value < 0.5f;
+>>>>>>> Stashed changes
         startX = startOnLeft ? 1 : width - 5;
         startY = Random.Range(height / 3, (height * 2) / 3);
 
@@ -70,7 +76,7 @@ public class MineGenerator : MonoBehaviour
         {
             for (int y = startY; y < startY + 4; y++)
             {
-                grid[x, y] = false; // force empty
+                grid[x, y] = false;
             }
         }
 
@@ -144,6 +150,7 @@ public class MineGenerator : MonoBehaviour
                     }
                     else
                     {
+<<<<<<< Updated upstream
                         // Interior walls: mostly mineable, sprinkle ground occasionally
                         float roll = Random.value;
                         if (roll < 0.1f)
@@ -152,6 +159,20 @@ public class MineGenerator : MonoBehaviour
                             tilemap.SetTile(cellPos, softRockTile);
                         else
                             tilemap.SetTile(cellPos, hardRockTile);
+=======
+                        // Pick a rock tile from the pool
+                        TileDefinition chosen = GetRandomTileDefinition();
+                        tilemap.SetTile(cellPos, chosen.tileAsset);
+
+                        // Map TileCategory → DropType
+                        DropType dropType = CategoryToDropType(chosen.category);
+
+                        // Ask DropManager for a drop of that type
+                        MineableDrop drop = DropManager.Instance.GetDropForType(dropType, playerLevel);
+
+                        // Assign durability + drop
+                        TileDurabilityManager.Instance.AssignDrop(cellPos, drop, chosen);
+>>>>>>> Stashed changes
                     }
                 }
                 else
@@ -163,9 +184,41 @@ public class MineGenerator : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    private TileDefinition GetRandomTileDefinition()
+    {
+        float totalWeight = 0f;
+        foreach (var def in rockPool.tileDefinitions)
+            totalWeight += def.spawnChance;
+
+        float roll = Random.value * totalWeight;
+
+        foreach (var def in rockPool.tileDefinitions)
+        {
+            if (roll < def.spawnChance)
+                return def;
+            roll -= def.spawnChance;
+        }
+
+        return rockPool.tileDefinitions[0]; // fallback
+    }
+
+    private DropType CategoryToDropType(TileCategory category)
+    {
+        switch (category)
+        {
+            case TileCategory.OreVein: return DropType.Ore;
+            case TileCategory.GemVein: return DropType.Gem;
+            case TileCategory.RelicVein: return DropType.Relic;
+            default: return DropType.None; // or whatever you use for "no drop"
+        }
+    }
+
+>>>>>>> Stashed changes
     private IEnumerator SpawnNextFrame()
     {
-        yield return null; // wait one frame for colliders to rebuild
+        yield return null;
         player.position = spawnPoint;
         player.GetComponent<Rigidbody2D>().freezeRotation = true; // prevent diagonal shooting
     }
