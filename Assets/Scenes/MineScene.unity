@@ -320,6 +320,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileDurabilityManager
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+  oreVeinPool: {fileID: 11400000, guid: 261afbb6abf33484ba91f0488b53c95e, type: 2}
+  gemVeinPool: {fileID: 11400000, guid: 251278e55e5de6840aec748b0197c4a8, type: 2}
+  relicVeinPool: {fileID: 0}
+>>>>>>> Stashed changes
 =======
   oreVeinPool: {fileID: 11400000, guid: 261afbb6abf33484ba91f0488b53c95e, type: 2}
   gemVeinPool: {fileID: 11400000, guid: 251278e55e5de6840aec748b0197c4a8, type: 2}
@@ -2132,7 +2138,10 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!114 &1971991063
@@ -2692,6 +2701,9 @@ SceneRoots:
   - {fileID: 1348416079}
   - {fileID: 557370858}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
