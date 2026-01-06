@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour
 
         if (tile is MineableTile mineable)
         {
-            TileDurabilityManager.Instance.Damage(cellPos, tilemap, mineable.durability, mineable.dropPrefab);
+            TileDurabilityManager.Instance.Damage(cellPos, tilemap);
         }
     }
 
