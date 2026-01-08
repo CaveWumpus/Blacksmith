@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MineableDrop
   dropName: Iron Ore
   dropType: 1
-  icon: {fileID: -2413806693520163455, guid: d790cbdb5220823419c0b921a8518028, type: 3}
+  icon: {fileID: -3283024978282841648, guid: 98ccf03a4b4a8d842ac576980cffaaaf, type: 3}
   prefab: {fileID: 2233736540174217641, guid: bf0610483198ae94987b2ac5ca1a2b08, type: 3}
   minHits: 1
   maxHits: 4

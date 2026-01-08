@@ -118,15 +118,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Pause"",
-                    ""type"": ""Button"",
-                    ""id"": ""aee29f6f-f344-4fe0-ae9c-a0feb1da34c3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -195,28 +186,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""fd4d31bb-69a3-4ea1-9210-ab55ba8d5e3c"",
-                    ""path"": ""<Gamepad>/start"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f4952f29-ab7b-4d09-b084-bb6227d39526"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -224,24 +193,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             ""name"": ""UI"",
             ""id"": ""238a7ab4-ae65-41cc-b357-ff24ab2eca92"",
             ""actions"": [
-                {
-                    ""name"": ""Pause"",
-                    ""type"": ""Button"",
-                    ""id"": ""43bb468d-eb98-4de6-9f7b-4577a185d05e"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Navigate"",
-                    ""type"": ""Value"",
-                    ""id"": ""ea03384c-31f1-4e9e-b824-00945ceee8ea"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
                 {
                     ""name"": ""Submit"",
                     ""type"": ""Button"",
@@ -259,53 +210,36 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""051c5177-45b0-4535-8ebd-826f08bb80f4"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Point"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""ccc40c63-2f93-4ecd-bb82-ca474a691835"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Click"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2baa6e67-8ab1-427a-83e3-d0c14f8d3169"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""a1483953-5382-4315-b099-80df63041749"",
-                    ""path"": ""<Gamepad>/start"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""560845f8-c38a-49d2-8d78-51f48644b85f"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""791a8046-6c74-4651-bd9f-de93f1b8ada5"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""407b444f-2465-4092-9a7c-b392ea8f1221"",
-                    ""path"": """",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""a856636b-7315-45da-88d0-9d975164c576"",
@@ -349,6 +283,155 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d0782cac-5062-4d5a-95f5-f3bb2703ded8"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""c669209c-9bf4-4368-a68d-6537bfee562b"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""968e89f9-e3cb-4bac-877e-fda0fa6278fc"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone(min=0.5)"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""04516073-5218-4145-ab8c-f836c8c34a88"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone(min=0.5)"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""09339fd5-aa72-4709-8539-94e3622b286c"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone(min=0.5)"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""fcde7142-46e8-4ec9-94b0-ff9a5a9277b2"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone(min=0.5)"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b04b6616-59e0-45f7-8d7d-b5879fbe30c5"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""34f4b1a7-1553-4806-ad14-ce124fd7bd34"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a7ed9686-0e85-46b0-aef0-99d182ae940d"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""455f9726-05f2-4b08-b24a-6289d64ca74c"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Global"",
+            ""id"": ""a549182e-4369-49a1-b179-f47a3710ac2f"",
+            ""actions"": [
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3684622-6e69-4b6c-b39b-00183b17602b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""326f7fdf-ea63-4795-8cb5-8352fa16b532"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f2f6484b-6a80-4946-a144-315613475550"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -360,19 +443,23 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Mine = m_Player.FindAction("Mine", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
-        m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
+        m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
+        m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
+        // Global
+        m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
+        m_Global_Pause = m_Global.FindAction("Pause", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerControls.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerControls.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerControls.Global.Disable() has not been called.");
     }
 
     /// <summary>
@@ -451,7 +538,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Mine;
     private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -475,10 +561,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/Pause".
-        /// </summary>
-        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -514,9 +596,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Pause.started += instance.OnPause;
-            @Pause.performed += instance.OnPause;
-            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -537,9 +616,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Pause.started -= instance.OnPause;
-            @Pause.performed -= instance.OnPause;
-            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -577,10 +653,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Pause;
-    private readonly InputAction m_UI_Navigate;
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Cancel;
+    private readonly InputAction m_UI_Navigate;
+    private readonly InputAction m_UI_Point;
+    private readonly InputAction m_UI_Click;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -593,14 +670,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public UIActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UI/Pause".
-        /// </summary>
-        public InputAction @Pause => m_Wrapper.m_UI_Pause;
-        /// <summary>
-        /// Provides access to the underlying input action "UI/Navigate".
-        /// </summary>
-        public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
-        /// <summary>
         /// Provides access to the underlying input action "UI/Submit".
         /// </summary>
         public InputAction @Submit => m_Wrapper.m_UI_Submit;
@@ -608,6 +677,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/Cancel".
         /// </summary>
         public InputAction @Cancel => m_Wrapper.m_UI_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Navigate".
+        /// </summary>
+        public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Point".
+        /// </summary>
+        public InputAction @Point => m_Wrapper.m_UI_Point;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Click".
+        /// </summary>
+        public InputAction @Click => m_Wrapper.m_UI_Click;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -634,18 +715,21 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
-            @Pause.started += instance.OnPause;
-            @Pause.performed += instance.OnPause;
-            @Pause.canceled += instance.OnPause;
-            @Navigate.started += instance.OnNavigate;
-            @Navigate.performed += instance.OnNavigate;
-            @Navigate.canceled += instance.OnNavigate;
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
             @Cancel.started += instance.OnCancel;
             @Cancel.performed += instance.OnCancel;
             @Cancel.canceled += instance.OnCancel;
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Point.started += instance.OnPoint;
+            @Point.performed += instance.OnPoint;
+            @Point.canceled += instance.OnPoint;
+            @Click.started += instance.OnClick;
+            @Click.performed += instance.OnClick;
+            @Click.canceled += instance.OnClick;
         }
 
         /// <summary>
@@ -657,18 +741,21 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UIActions" />
         private void UnregisterCallbacks(IUIActions instance)
         {
-            @Pause.started -= instance.OnPause;
-            @Pause.performed -= instance.OnPause;
-            @Pause.canceled -= instance.OnPause;
-            @Navigate.started -= instance.OnNavigate;
-            @Navigate.performed -= instance.OnNavigate;
-            @Navigate.canceled -= instance.OnNavigate;
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
             @Cancel.started -= instance.OnCancel;
             @Cancel.performed -= instance.OnCancel;
             @Cancel.canceled -= instance.OnCancel;
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Point.started -= instance.OnPoint;
+            @Point.performed -= instance.OnPoint;
+            @Point.canceled -= instance.OnPoint;
+            @Click.started -= instance.OnClick;
+            @Click.performed -= instance.OnClick;
+            @Click.canceled -= instance.OnClick;
         }
 
         /// <summary>
@@ -702,6 +789,102 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // Global
+    private readonly InputActionMap m_Global;
+    private List<IGlobalActions> m_GlobalActionsCallbackInterfaces = new List<IGlobalActions>();
+    private readonly InputAction m_Global_Pause;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Global".
+    /// </summary>
+    public struct GlobalActions
+    {
+        private @PlayerControls m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public GlobalActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Global/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_Global_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Global; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="GlobalActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(GlobalActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="GlobalActions" />
+        public void AddCallbacks(IGlobalActions instance)
+        {
+            if (instance == null || m_Wrapper.m_GlobalActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GlobalActionsCallbackInterfaces.Add(instance);
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="GlobalActions" />
+        private void UnregisterCallbacks(IGlobalActions instance)
+        {
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />.
+        /// </summary>
+        /// <seealso cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />
+        public void RemoveCallbacks(IGlobalActions instance)
+        {
+            if (m_Wrapper.m_GlobalActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
+        /// <seealso cref="GlobalActions.RemoveCallbacks(IGlobalActions)" />
+        /// <seealso cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />
+        public void SetCallbacks(IGlobalActions instance)
+        {
+            foreach (var item in m_Wrapper.m_GlobalActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_GlobalActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="GlobalActions" /> instance referencing this action map.
+    /// </summary>
+    public GlobalActions @Global => new GlobalActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.
     /// </summary>
@@ -730,13 +913,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -745,20 +921,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     /// <seealso cref="UIActions.RemoveCallbacks(IUIActions)" />
     public interface IUIActions
     {
-        /// <summary>
-        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPause(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnNavigate(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -773,5 +935,41 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Point" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPoint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Click" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClick(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Global" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
+    /// <seealso cref="GlobalActions.RemoveCallbacks(IGlobalActions)" />
+    public interface IGlobalActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
 }

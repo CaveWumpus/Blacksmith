@@ -21,4 +21,18 @@ public class RelicSlotUI : MonoBehaviour
 
         nameText.text = relicName;
     }
+
+    public void OnSlotClicked()
+    {
+        RelicContextMenu.Instance.Open(this);
+    }
+
+
+    // ✅ Clear slot completely
+    public void ClearSlot()
+    {
+        icon.sprite = null;
+        icon.enabled = false;
+        nameText.text = "";
+    }
 }

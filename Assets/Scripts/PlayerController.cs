@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 movement;
     private bool isGrounded = false;
 
-    private PlayerControls controls;
+    [HideInInspector] public PlayerControls controls; //assign from PauseManager
     private int facingDirection = 1; // 1 = right, -1 = left
 
     [Header("Layers")]
@@ -25,18 +25,6 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        controls = new PlayerControls();
-
-        controls.Player.Move.performed += ctx => movement = ctx.ReadValue<Vector2>();
-        controls.Player.Jump.performed += ctx => Jump();
-        controls.Player.Mine.performed += ctx => Mine();
-    }
-
-    void OnEnable() => controls.Player.Enable();
-    void OnDisable() => controls.Player.Disable();
-
-    void Start()
-    {
         rb = GetComponent<Rigidbody2D>();
 
         if (miningIndicatorPrefab != null)
@@ -44,12 +32,24 @@ public class PlayerController : MonoBehaviour
             miningIndicatorInstance = Instantiate(miningIndicatorPrefab);
             miningIndicatorInstance.SetActive(false);
         }
+        
+    }
+
+    //void OnEnable() => controls.Player.Enable();
+    //void OnDisable() => controls.Player.Disable();
+
+    void Start()
+    {
+        controls.Player.Move.performed += ctx => movement = ctx.ReadValue<Vector2>();
+        controls.Player.Jump.performed += ctx => Jump();
+        controls.Player.Mine.performed += ctx => Mine();
+        
     }
 
     void FixedUpdate()
     {
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
-        movement = controls.Player.Move.ReadValue<Vector2>();
+        //movement = controls.Player.Move.ReadValue<Vector2>();
 
         if (movement.x > 0.1f) facingDirection = 1;
         else if (movement.x < -0.1f) facingDirection = -1;
@@ -59,7 +59,8 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (isGrounded)
+        // Guard against jumping while paused
+        if (!FindFirstObjectByType<PauseManager>().IsPaused && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
@@ -67,9 +68,12 @@ public class PlayerController : MonoBehaviour
 
     void Mine()
     {
-        if (movement.y > 0.5f)       MineUpward();
-        else if (movement.y < -0.5f) MineDownward();
-        else if (Mathf.Abs(movement.x) > 0.3f) MineForward();
+        if (!FindFirstObjectByType<PauseManager>().IsPaused)
+        {
+            if (movement.y > 0.5f)       MineUpward();
+            else if (movement.y < -0.5f) MineDownward();
+            else if (Mathf.Abs(movement.x) > 0.3f) MineForward();
+        }
     }
 
     void MineForward()

@@ -14,6 +14,7 @@ public class RelicInventory : MonoBehaviour
 
     private List<RelicSlot> relicSlots = new List<RelicSlot>();
     private List<RelicSlotUI> uiSlots = new List<RelicSlotUI>();
+    public IReadOnlyList<RelicSlotUI> UISlots => uiSlots;
 
     void Awake()
     {
@@ -28,7 +29,7 @@ public class RelicInventory : MonoBehaviour
             GameObject slotObj = Instantiate(relicSlotPrefab, relicPanel);
             RelicSlotUI ui = slotObj.GetComponent<RelicSlotUI>();
             uiSlots.Add(ui);
-            ui.SetRelic(null, ""); // start empty
+            ui.ClearSlot(); // start empty
         }
     }
 
@@ -46,6 +47,32 @@ public class RelicInventory : MonoBehaviour
         }
 
         Debug.Log("[RelicInventory] Relic inventory full!");
+    }
+
+    // ✅ Remove relic
+    public void RemoveRelic(string relicName)
+    {
+        for (int i = 0; i < relicSlots.Count; i++)
+        {
+            if (relicSlots[i].occupied && relicSlots[i].relicName == relicName)
+            {
+                relicSlots[i].occupied = false;
+                relicSlots[i].relicName = "";
+                uiSlots[i].ClearSlot();
+                return;
+            }
+        }
+    }
+
+    // ✅ Query relic ownership
+    public bool HasRelic(string relicName)
+    {
+        for (int i = 0; i < relicSlots.Count; i++)
+        {
+            if (relicSlots[i].occupied && relicSlots[i].relicName == relicName)
+                return true;
+        }
+        return false;
     }
 }
 
