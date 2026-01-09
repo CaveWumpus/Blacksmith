@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -17,6 +18,16 @@ public class PlayerInventory : MonoBehaviour
     private List<InventorySlotUI> uiSlots = new List<InventorySlotUI>();
     public IReadOnlyList<InventorySlotUI> UISlots => uiSlots;
 
+    public int GetEmptySlotIndex()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (string.IsNullOrEmpty(slots[i].itemName))
+                return i;
+        }
+        return -1; // no empty slot
+    }
+    
     void Awake()
     {
         Debug.Log($"[PlayerInventory] Instantiating {slotCount} slots into {backpackPanel.name}");
@@ -36,6 +47,10 @@ public class PlayerInventory : MonoBehaviour
             uiSlots.Add(ui);
             ui.ClearSlot(); // start empty
         }
+
+        // ✅ Wire navigation after slots exist
+        int rows = slotCount / 6; // assuming 6 columns
+        WireSlotNavigation(rows, cols: 6); // 4 rows × 6 columns = 24 slots
     }
 
     public void AddItem(MineableDrop drop)
@@ -107,6 +122,44 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    public void MoveItem(InventorySlotUI from, InventorySlotUI to)
+    {
+        int fromIndex = uiSlots.IndexOf(from);
+        int toIndex = uiSlots.IndexOf(to);
+
+        if (fromIndex == -1 || toIndex == -1) return;
+        var fromSlot = slots[fromIndex];
+        var toSlot = slots[toIndex];
+
+        if (string.IsNullOrEmpty(toSlot.itemName))
+        {
+            // Move into empty slot
+            toSlot.itemName = fromSlot.itemName;
+            toSlot.count = fromSlot.count;
+            UpdateUISlot(toIndex, from.icon.sprite, toSlot.count);
+
+            // Clear source
+            fromSlot.itemName = "";
+            fromSlot.count = 0;
+            from.ClearSlot();
+        }
+        else
+        {
+            // Swap items
+            string tempName = toSlot.itemName;
+            int tempCount = toSlot.count;
+            Sprite tempIcon = to.icon.sprite;
+
+            toSlot.itemName = fromSlot.itemName;
+            toSlot.count = fromSlot.count;
+            UpdateUISlot(toIndex, from.icon.sprite, toSlot.count);
+
+            fromSlot.itemName = tempName;
+            fromSlot.count = tempCount;
+            UpdateUISlot(fromIndex, tempIcon, fromSlot.count);
+        }
+    }
+
     // ✅ Query item count
     public int GetItemCount(string itemName)
     {
@@ -122,9 +175,36 @@ public class PlayerInventory : MonoBehaviour
     {
         uiSlots[index].SetSlot(icon, count);
     }
-    
-}
+    public void WireSlotNavigation(int rows, int cols)
+    {
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                int index = row * cols + col;
+                var button = uiSlots[index].GetComponent<Button>();
+                var nav = new Navigation { mode = Navigation.Mode.Explicit };
+                // Up
+                if (row > 0)
+                    nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
 
+                // Down
+                if (row < rows - 1)
+                    nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
+
+                // Left
+                if (col > 0)
+                    nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
+
+                // Right
+                if (col < cols - 1)
+                    nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
+
+                button.navigation = nav;
+            }
+        }
+    }
+}    
 [System.Serializable]
 public class InventorySlot
 {

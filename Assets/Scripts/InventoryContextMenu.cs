@@ -26,24 +26,31 @@ public class InventoryContextMenu : MonoBehaviour
     public void OnMove()
     {
         Debug.Log($"Move {currentSlot.itemName}");
-        // TODO: implement move logic
+        PauseManager.Instance.inventoryMode = PauseManager.InventoryMode.MovePending;
+        PauseManager.Instance.moveSourceSlot = currentSlot;
         Close();
     }
 
     public void OnSplit()
     {
         int half = currentSlot.count / 2;
-        if (half > 0)
+        if (half > 0 && PlayerInventory.Instance.GetEmptySlotIndex() != -1)
         {
             PlayerInventory.Instance.AddItem(new MineableDrop { dropName = currentSlot.itemName, icon = currentSlot.icon.sprite }, half);
             PlayerInventory.Instance.RemoveItem(currentSlot.itemName, half);
         }
+        else
+        {
+            Debug.Log("No empty slot available to split.");
+        }
         Close();
+        PauseManager.Instance.inventoryMode = PauseManager.InventoryMode.Navigation;
     }
 
     public void OnDelete()
     {
         PlayerInventory.Instance.RemoveItem(currentSlot.itemName, currentSlot.count);
         Close();
+        PauseManager.Instance.inventoryMode = PauseManager.InventoryMode.Navigation;
     }
 }

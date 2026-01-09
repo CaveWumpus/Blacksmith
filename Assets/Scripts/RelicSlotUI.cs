@@ -4,11 +4,17 @@ using TMPro;
 
 public class RelicSlotUI : MonoBehaviour
 {
-    public Image icon;        // drag the Icon child here
-    public TMP_Text nameText; // drag the Name child here
+    public Image icon;
+    public TMP_Text nameText;
 
-    public void SetRelic(Sprite relicIcon, string relicName)
+    public string relicName;   // <-- add this
+    public bool occupied;      // optional mirror of RelicSlot
+
+    public void SetRelic(Sprite relicIcon, string newName)
     {
+        relicName = newName;
+        occupied = true;
+
         if (relicIcon != null)
         {
             icon.sprite = relicIcon;
@@ -19,20 +25,35 @@ public class RelicSlotUI : MonoBehaviour
             icon.enabled = false;
         }
 
-        nameText.text = relicName;
+        nameText.text = newName;
+    }
+
+    public void ClearSlot()
+    {
+        relicName = "";
+        occupied = false;
+        icon.sprite = null;
+        icon.enabled = false;
+        nameText.text = "";
     }
 
     public void OnSlotClicked()
     {
-        RelicContextMenu.Instance.Open(this);
-    }
+        var pm = PauseManager.Instance;
 
-
-    // ✅ Clear slot completely
-    public void ClearSlot()
-    {
-        icon.sprite = null;
-        icon.enabled = false;
-        nameText.text = "";
+        if (pm.currentMode == PauseManager.PauseMenuMode.Inventory)
+        {
+            if (pm.inventoryMode == PauseManager.InventoryMode.Navigation)
+            {
+                RelicContextMenu.Instance.Open(this);
+                pm.inventoryMode = PauseManager.InventoryMode.ContextMenu;
+            }
+            else if (pm.inventoryMode == PauseManager.InventoryMode.MovePending)
+            {
+                RelicInventory.Instance.MoveItem(pm.moveSourceRelicSlot, this);
+                pm.moveSourceRelicSlot = null;
+                pm.inventoryMode = PauseManager.InventoryMode.Navigation;
+            }
+        }
     }
 }

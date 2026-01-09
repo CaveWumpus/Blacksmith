@@ -32,8 +32,25 @@ public class InventorySlotUI : MonoBehaviour
 
     public void OnSlotClicked()
     {
-        // Open a contextual menu for this slot
-        InventoryContextMenu.Instance.Open(this);
+        var pm = PauseManager.Instance;
+
+        if (pm.currentMode == PauseManager.PauseMenuMode.Inventory)
+        {
+            if (pm.inventoryMode == PauseManager.InventoryMode.Navigation)
+            {
+                // Open context menu
+                InventoryContextMenu.Instance.Open(this);
+                pm.inventoryMode = PauseManager.InventoryMode.ContextMenu;
+            }
+        
+            else if (pm.inventoryMode == PauseManager.InventoryMode.MovePending)
+            {
+                // Perform move: swap if occupied, otherwise place
+                PlayerInventory.Instance.MoveItem(pm.moveSourceSlot, this);
+                pm.moveSourceSlot = null;
+                pm.inventoryMode = PauseManager.InventoryMode.Navigation;
+            }
+        }
     }
     // ✅ Clear slot completely
     public void ClearSlot()
