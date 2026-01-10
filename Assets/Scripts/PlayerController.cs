@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
         Vector2 origin = (Vector2)transform.position + new Vector2(facingDirection * 0.4f, 0);
         Vector2 direction = new Vector2(facingDirection, 0);
 
-        Debug.DrawRay(origin, direction * 1.5f, Color.red, 0.5f);
+        //Debug.DrawRay(origin, direction * 1.5f, Color.red, 0.5f);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, 1.5f, miningLayer);
 
         if (hit.collider != null && hit.collider.gameObject != gameObject)
@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
         Vector2 origin = (Vector2)transform.position + Vector2.up * 0.4f;
         Vector2 direction = Vector2.up;
 
-        Debug.DrawRay(origin, direction * 1f, Color.green, 0.5f);
+        //Debug.DrawRay(origin, direction * 1f, Color.green, 0.5f);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, 1f, miningLayer);
 
         if (hit.collider != null && hit.collider.gameObject != gameObject)
@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
         Vector2 origin = (Vector2)transform.position + Vector2.down * 0.4f;
         Vector2 direction = Vector2.down;
 
-        Debug.DrawRay(origin, direction * 2f, Color.blue, 0.5f);
+        //Debug.DrawRay(origin, direction * 2f, Color.blue, 0.5f);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, 2f, miningLayer);
 
         if (hit.collider != null && hit.collider.gameObject != gameObject)
@@ -123,11 +123,11 @@ public class PlayerController : MonoBehaviour
         Vector3 cellCenter = tilemap.GetCellCenterWorld(cellPos);
         TileBase tile = tilemap.GetTile(cellPos);
 
-        Debug.Log($"Hit point: {hit.point}, Cell: {cellPos}, Center: {cellCenter}, Tile: {tile}");
+        //Debug.Log($"Hit point: {hit.point}, Cell: {cellPos}, Center: {cellCenter}, Tile: {tile}");
 
         if (tile == null)
         {
-            Debug.LogWarning($"No tile found at {cellPos} even though collider was hit!");
+            //Debug.LogWarning($"No tile found at {cellPos} even though collider was hit!");
             return;
         }
 

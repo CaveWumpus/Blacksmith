@@ -6,117 +6,93 @@ public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance;
 
-    [Header("Backpack Settings")]
-    public int slotCount = 24;        // adjustable in Inspector
-    public int maxStackSize = 20;     // adjustable in Inspector
+    [Header("Player Inventory Settings")]
+    public int slotCount = 20;   // adjustable in Inspector
+    public int columns = 5;      // adjustable in Inspector
 
     [Header("UI References")]
-    public Transform backpackPanel;   // drag BackpackPanel here
-    public GameObject inventorySlotPrefab; // drag InventorySlotPrefab here
+    public Transform inventoryPanel;   // drag PlayerInventoryPanel here
+    public GameObject slotPrefab;      // drag PlayerSlotPrefab here
 
-    private List<InventorySlot> slots = new List<InventorySlot>();
+    private List<PlayerSlot> slots = new List<PlayerSlot>();
     private List<InventorySlotUI> uiSlots = new List<InventorySlotUI>();
-    public IReadOnlyList<InventorySlotUI> UISlots => uiSlots;
+    public List<InventorySlotUI> UISlots => uiSlots;
+    //public IReadOnlyList<InventorySlotUI> UISlots => uiSlots;
 
-    public int GetEmptySlotIndex()
-    {
-        for (int i = 0; i < slots.Count; i++)
-        {
-            if (string.IsNullOrEmpty(slots[i].itemName))
-                return i;
-        }
-        return -1; // no empty slot
-    }
-    
+    [Header("Stack Settings")]
+    public int maxStackSize = 20;
+
     void Awake()
     {
-        Debug.Log($"[PlayerInventory] Instantiating {slotCount} slots into {backpackPanel.name}");
-
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
         // Initialize empty slots
         for (int i = 0; i < slotCount; i++)
-            slots.Add(new InventorySlot());
-
-        // Instantiate UI slots
-        for (int i = 0; i < slotCount; i++)
         {
-            GameObject slotObj = Instantiate(inventorySlotPrefab, backpackPanel);
+            slots.Add(new PlayerSlot());
+
+            GameObject slotObj = Instantiate(slotPrefab, inventoryPanel);
             InventorySlotUI ui = slotObj.GetComponent<InventorySlotUI>();
             uiSlots.Add(ui);
             ui.ClearSlot(); // start empty
         }
-
-        // ✅ Wire navigation after slots exist
-        int rows = slotCount / 6; // assuming 6 columns
-        WireSlotNavigation(rows, cols: 6); // 4 rows × 6 columns = 24 slots
     }
 
-    public void AddItem(MineableDrop drop)
+    void Start()
     {
-        Debug.Log($"[Inventory] Adding {drop.dropName} to backpack");
+        // Wire navigation AFTER slots exist
+        int rows = Mathf.CeilToInt((float)slotCount / columns);
+        WireSlotNavigation(rows, columns);
+    }
 
-        if (drop == null) return;
+    public void AddItem(Sprite icon, string itemName, int count = 1)
+    {
+        int remaining = count;
 
-        
-        // Try to find existing stack
+        // Try to stack into existing slots
         for (int i = 0; i < slots.Count; i++)
         {
-            if (slots[i].itemName == drop.dropName && slots[i].count < maxStackSize)
+            if (slots[i].occupied && slots[i].itemName == itemName && slots[i].count < maxStackSize)
             {
-                slots[i].count++;
-                UpdateUISlot(i, drop.icon, slots[i].count);
-                return;
+                int space = maxStackSize - slots[i].count;
+                int toAdd = Mathf.Min(space, remaining);
+
+                slots[i].count += toAdd;
+                uiSlots[i].SetSlot(icon, slots[i].count, itemName);
+                remaining -= toAdd;
+
+                if (remaining <= 0) return;
             }
         }
 
-        // Try to find empty slot
-        for (int i = 0; i < slots.Count; i++)
+        // Place into empty slots
+        for (int i = 0; i < slots.Count && remaining > 0; i++)
         {
-            if (string.IsNullOrEmpty(slots[i].itemName))
+            if (!slots[i].occupied)
             {
-                slots[i].itemName = drop.dropName;
-                slots[i].count = 1;
-                UpdateUISlot(i, drop.icon, slots[i].count);
-                return;
+                int toAdd = Mathf.Min(maxStackSize, remaining);
+
+                slots[i].itemName = itemName;
+                slots[i].count = toAdd;
+                slots[i].occupied = true;
+
+                uiSlots[i].SetSlot(icon, toAdd, itemName);
+                remaining -= toAdd;
             }
         }
-
-        Debug.Log("[Inventory] Backpack full!");
     }
 
-    public void AddItem(MineableDrop drop, int amount)
-    {
-        Debug.Log($"[Inventory] Adding {amount}x {drop.dropName} to backpack");
-
-        if (drop == null) return;
-
-        for (int i = 0; i < amount; i++)
-        {
-    
-            AddItem(drop); // call the single‑item version
-        }
-    }
-    
-    // ✅ Remove items
-    public void RemoveItem(string itemName, int amount = 1)
+    public void RemoveItem(string itemName, int count)
     {
         for (int i = 0; i < slots.Count; i++)
         {
-            if (slots[i].itemName == itemName)
+            if (slots[i].occupied && slots[i].itemName == itemName)
             {
-                slots[i].count -= amount;
-                if (slots[i].count <= 0)
-                {
-                    slots[i].itemName = "";
-                    slots[i].count = 0;
-                    uiSlots[i].ClearSlot();
-                }
-                else
-                {
-                    UpdateUISlot(i, uiSlots[i].icon.sprite, slots[i].count);
-                }
+                slots[i].occupied = false;
+                slots[i].itemName = "";
+                slots[i].count = 0;
+                uiSlots[i].ClearSlot();
                 return;
             }
         }
@@ -128,86 +104,77 @@ public class PlayerInventory : MonoBehaviour
         int toIndex = uiSlots.IndexOf(to);
 
         if (fromIndex == -1 || toIndex == -1) return;
+
         var fromSlot = slots[fromIndex];
         var toSlot = slots[toIndex];
 
-        if (string.IsNullOrEmpty(toSlot.itemName))
+        if (!toSlot.occupied)
         {
-            // Move into empty slot
             toSlot.itemName = fromSlot.itemName;
             toSlot.count = fromSlot.count;
-            UpdateUISlot(toIndex, from.icon.sprite, toSlot.count);
+            toSlot.occupied = true;
 
-            // Clear source
+            uiSlots[toIndex].SetSlot(from.icon.sprite, fromSlot.count, fromSlot.itemName);
+
             fromSlot.itemName = "";
             fromSlot.count = 0;
+            fromSlot.occupied = false;
             from.ClearSlot();
         }
         else
         {
-            // Swap items
             string tempName = toSlot.itemName;
             int tempCount = toSlot.count;
             Sprite tempIcon = to.icon.sprite;
 
             toSlot.itemName = fromSlot.itemName;
             toSlot.count = fromSlot.count;
-            UpdateUISlot(toIndex, from.icon.sprite, toSlot.count);
+            uiSlots[toIndex].SetSlot(from.icon.sprite, fromSlot.count, fromSlot.itemName);
 
             fromSlot.itemName = tempName;
             fromSlot.count = tempCount;
-            UpdateUISlot(fromIndex, tempIcon, fromSlot.count);
+            uiSlots[fromIndex].SetSlot(tempIcon, tempCount, tempName);
         }
     }
 
-    // ✅ Query item count
-    public int GetItemCount(string itemName)
-    {
-        for (int i = 0; i < slots.Count; i++)
-        {
-            if (slots[i].itemName == itemName)
-                return slots[i].count;
-        }
-        return 0;
-    }
-
-    private void UpdateUISlot(int index, Sprite icon, int count)
-    {
-        uiSlots[index].SetSlot(icon, count);
-    }
     public void WireSlotNavigation(int rows, int cols)
     {
+        if (uiSlots == null || uiSlots.Count == 0) return;
+
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
                 int index = row * cols + col;
+                if (index >= uiSlots.Count) continue;
+
                 var button = uiSlots[index].GetComponent<Button>();
+                if (button == null) continue;
+
                 var nav = new Navigation { mode = Navigation.Mode.Explicit };
-                // Up
-                if (row > 0)
+
+                if (row > 0 && (row - 1) * cols + col < uiSlots.Count)
                     nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
 
-                // Down
-                if (row < rows - 1)
+                if (row < rows - 1 && (row + 1) * cols + col < uiSlots.Count)
                     nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
 
-                // Left
-                if (col > 0)
+                if (col > 0 && row * cols + (col - 1) < uiSlots.Count)
                     nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
 
-                // Right
-                if (col < cols - 1)
+                if (col < cols - 1 && row * cols + (col + 1) < uiSlots.Count)
                     nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
 
                 button.navigation = nav;
             }
         }
     }
-}    
+}
+
 [System.Serializable]
-public class InventorySlot
+public class PlayerSlot
 {
     public string itemName;
     public int count;
+    public bool occupied;
 }

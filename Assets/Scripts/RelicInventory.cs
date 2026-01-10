@@ -8,14 +8,16 @@ public class RelicInventory : MonoBehaviour
 
     [Header("Relic Settings")]
     public int relicSlotCount = 12;   // adjustable in Inspector
+    public int columns = 6;           // adjustable in Inspector
 
     [Header("UI References")]
-    public Transform relicPanel;      // drag RelicPanel here
+    public Transform relicPanel;       // drag RelicPanel here
     public GameObject relicSlotPrefab; // drag RelicSlotPrefab here
 
     private List<RelicSlot> relicSlots = new List<RelicSlot>();
     private List<RelicSlotUI> uiSlots = new List<RelicSlotUI>();
-    public IReadOnlyList<RelicSlotUI> UISlots => uiSlots;
+    public List<RelicSlotUI> UISlots => uiSlots;
+    //public IReadOnlyList<RelicSlotUI> UISlots => uiSlots;
 
     void Awake()
     {
@@ -32,10 +34,13 @@ public class RelicInventory : MonoBehaviour
             uiSlots.Add(ui);
             ui.ClearSlot(); // start empty
         }
+    }
 
-        // ✅ Wire navigation after slots exist
-        int rows = relicSlotCount / 6; // assuming 6 columns
-        WireSlotNavigation(rows, cols: 6); // 2 rows × 6 columns = 12 slots
+    void Start()
+    {
+        // ✅ Wire navigation AFTER slots exist
+        int rows = Mathf.CeilToInt((float)relicSlotCount / columns);
+        WireSlotNavigation(rows, columns);
     }
 
     public void AddRelic(MineableDrop drop)
@@ -46,15 +51,14 @@ public class RelicInventory : MonoBehaviour
             {
                 relicSlots[i].relicName = drop.dropName;
                 relicSlots[i].occupied = true;
-                uiSlots[i].SetRelic(drop.icon, drop.dropName);
+                relicSlots[i].count = 1;
+
+                uiSlots[i].SetSlot(drop.icon, 1, drop.dropName);
                 return;
             }
         }
-
-        Debug.Log("[RelicInventory] Relic inventory full!");
     }
 
-    // ✅ Remove relic
     public void RemoveRelic(string relicName)
     {
         for (int i = 0; i < relicSlots.Count; i++)
@@ -63,6 +67,7 @@ public class RelicInventory : MonoBehaviour
             {
                 relicSlots[i].occupied = false;
                 relicSlots[i].relicName = "";
+                relicSlots[i].count = 0;
                 uiSlots[i].ClearSlot();
                 return;
             }
@@ -75,17 +80,22 @@ public class RelicInventory : MonoBehaviour
         int toIndex = uiSlots.IndexOf(to);
 
         if (fromIndex == -1 || toIndex == -1) return;
+
         var fromSlot = relicSlots[fromIndex];
         var toSlot = relicSlots[toIndex];
+
         if (!toSlot.occupied)
         {
             // Move into empty slot
             toSlot.relicName = fromSlot.relicName;
+            toSlot.count = fromSlot.count;
             toSlot.occupied = true;
-            uiSlots[toIndex].SetRelic(from.icon.sprite, fromSlot.relicName);
+
+            uiSlots[toIndex].SetSlot(from.icon.sprite, fromSlot.count, fromSlot.relicName);
 
             // Clear source
             fromSlot.relicName = "";
+            fromSlot.count = 0;
             fromSlot.occupied = false;
             from.ClearSlot();
         }
@@ -93,18 +103,19 @@ public class RelicInventory : MonoBehaviour
         {
             // Swap relics
             string tempName = toSlot.relicName;
+            int tempCount = toSlot.count;
             Sprite tempIcon = to.icon.sprite;
 
             toSlot.relicName = fromSlot.relicName;
-            uiSlots[toIndex].SetRelic(from.icon.sprite, fromSlot.relicName);
+            toSlot.count = fromSlot.count;
+            uiSlots[toIndex].SetSlot(from.icon.sprite, fromSlot.count, fromSlot.relicName);
 
             fromSlot.relicName = tempName;
-            uiSlots[fromIndex].SetRelic(tempIcon, tempName);
+            fromSlot.count = tempCount;
+            uiSlots[fromIndex].SetSlot(tempIcon, tempCount, tempName);
         }
     }
 
-
-    // ✅ Query relic ownership
     public bool HasRelic(string relicName)
     {
         for (int i = 0; i < relicSlots.Count; i++)
@@ -114,34 +125,38 @@ public class RelicInventory : MonoBehaviour
         }
         return false;
     }
+
     public void WireSlotNavigation(int rows, int cols)
     {
+        if (uiSlots == null || uiSlots.Count == 0) return;
+
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
                 int index = row * cols + col;
+                if (index >= uiSlots.Count) continue;
+
                 var button = uiSlots[index].GetComponent<Button>();
+                if (button == null) continue;
+
                 var nav = new Navigation { mode = Navigation.Mode.Explicit };
-                // Up
-                if (row > 0)
+
+                if (row > 0 && (row - 1) * cols + col < uiSlots.Count)
                     nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
 
-                // Down
-                if (row < rows - 1)
+                if (row < rows - 1 && (row + 1) * cols + col < uiSlots.Count)
                     nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
 
-                // Left
-                if (col > 0)
+                if (col > 0 && row * cols + (col - 1) < uiSlots.Count)
                     nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
 
-                // Right
-                if (col < cols - 1)
+                if (col < cols - 1 && row * cols + (col + 1) < uiSlots.Count)
                     nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
 
                 button.navigation = nav;
             }
-        }   
+        }
     }
 }
 
@@ -150,4 +165,5 @@ public class RelicSlot
 {
     public string relicName;
     public bool occupied;
+    public int count;
 }

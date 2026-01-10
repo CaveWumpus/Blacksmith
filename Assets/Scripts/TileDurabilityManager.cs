@@ -31,7 +31,7 @@ public class TileDurabilityManager : MonoBehaviour
         else
             durabilityMap[cellPos] = def.fixedDurability;
 
-        Debug.Log($"[AssignDrop] {def.tileName} at {cellPos} durability {durabilityMap[cellPos]}");
+        //Debug.Log($"[AssignDrop] {def.tileName} at {cellPos} durability {durabilityMap[cellPos]}");
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class TileDurabilityManager : MonoBehaviour
         if (!durabilityMap.ContainsKey(cellPos)) return;
 
         durabilityMap[cellPos]--;
-        Debug.Log($"[Damage] Cell {cellPos} hit. Remaining durability: {durabilityMap[cellPos]}");
+        //Debug.Log($"[Damage] Cell {cellPos} hit. Remaining durability: {durabilityMap[cellPos]}");
 
         if (dropMap.ContainsKey(cellPos))
         {
@@ -55,15 +55,15 @@ public class TileDurabilityManager : MonoBehaviour
             // Ore/Gem veins: add item each hit
             if (IsVeinTile(currentTile) && (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem))
             {
-                PlayerInventory.Instance.AddItem(drop);
-                Debug.Log($"[Damage] Added {drop.dropName} to inventory");
+                PlayerInventory.Instance.AddItem(drop.icon, drop.dropName, 1);
+                //Debug.Log($"[Damage] Added {drop.dropName} to inventory");
             }
 
             // Relic veins: add relic once, then clear immediately
             if (IsVeinTile(currentTile) && drop.dropType == DropType.Relic)
             {
                 RelicInventory.Instance.AddRelic(drop);
-                Debug.Log($"[Damage] Added relic {drop.dropName} to relic inventory");
+                //Debug.Log($"[Damage] Added relic {drop.dropName} to relic inventory");
 
                 // Clear relic tile immediately
                 tilemap.SetTile(cellPos, null);
@@ -94,7 +94,7 @@ public class TileDurabilityManager : MonoBehaviour
             // Rock breaking: reveal vein, no inventory add
             if (IsRockTile(currentTile))
             {
-                Debug.Log($"[BreakTile] Rock at {cellPos} destroyed, revealing vein of type {drop.dropType}");
+                //Debug.Log($"[BreakTile] Rock at {cellPos} destroyed, revealing vein of type {drop.dropType}");
 
                 if (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem || drop.dropType == DropType.Relic)
                 {
@@ -106,7 +106,7 @@ public class TileDurabilityManager : MonoBehaviour
                             veinDef.randomDurabilityRange.x,
                             veinDef.randomDurabilityRange.y + 1
                         );
-                        Debug.Log($"[BreakTile] Spawned vein {veinDef.tileName} at {cellPos} with durability {durabilityMap[cellPos]}");
+                        //Debug.Log($"[BreakTile] Spawned vein {veinDef.tileName} at {cellPos} with durability {durabilityMap[cellPos]}");
                         return;
                     }
                 }
@@ -114,7 +114,7 @@ public class TileDurabilityManager : MonoBehaviour
             else
             {
                 // Vein breaking: clear tile
-                Debug.Log($"[BreakTile] Vein at {cellPos} destroyed, clearing tile.");
+                //Debug.Log($"[BreakTile] Vein at {cellPos} destroyed, clearing tile.");
                 tilemap.SetTile(cellPos, null);
                 durabilityMap.Remove(cellPos);
                 dropMap.Remove(cellPos);

@@ -3,29 +3,25 @@ using UnityEngine.EventSystems;
 
 public class InventoryToggleUI : MonoBehaviour
 {
+    [Header("Panels")]
     public GameObject backpackPanel;
     public GameObject relicPanel;
 
-    // Track which panel is active
     public bool IsBackpackActive { get; private set; }
-
-    // Optional: reference to the toggle buttons if you have them
-    public GameObject backpackButton;
-    public GameObject relicButton;
-
-    public GameObject CurrentPanelButton
-    {
-        get
-        {
-            return IsBackpackActive ? backpackButton : relicButton;
-        }
-    }
 
     public void ShowBackpack()
     {
         backpackPanel.SetActive(true);
         relicPanel.SetActive(false);
         IsBackpackActive = true;
+
+        // Reset focus to first player slot if available
+        if (PlayerInventory.Instance != null && PlayerInventory.Instance.UISlots.Count > 0)
+        {
+            var firstSlot = PlayerInventory.Instance.UISlots[0].gameObject;
+            EventSystem.current.SetSelectedGameObject(firstSlot);
+            EventSystem.current.firstSelectedGameObject = firstSlot;
+        }
     }
 
     public void ShowRelics()
@@ -33,6 +29,14 @@ public class InventoryToggleUI : MonoBehaviour
         backpackPanel.SetActive(false);
         relicPanel.SetActive(true);
         IsBackpackActive = false;
+
+        // Reset focus to first relic slot if available
+        if (RelicInventory.Instance != null && RelicInventory.Instance.UISlots.Count > 0)
+        {
+            var firstRelic = RelicInventory.Instance.UISlots[0].gameObject;
+            EventSystem.current.SetSelectedGameObject(firstRelic);
+            EventSystem.current.firstSelectedGameObject = firstRelic;
+        }
     }
 
     public void ToggleLeftRight(Vector2 nav)
