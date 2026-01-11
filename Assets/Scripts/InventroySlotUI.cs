@@ -16,6 +16,7 @@ public class InventorySlotUI : MonoBehaviour
         itemName = newName;
         count = newCount;
 
+        if (icon == null) return; // icon Image destroyed
         icon.sprite = itemIcon;
         icon.enabled = itemIcon != null;
         countText.text = count > 1 ? "x" + count : "";
@@ -44,6 +45,7 @@ public class InventorySlotUI : MonoBehaviour
     public void ClearSlot()
     {
         Debug.Log($"[ClearSlot] {name} cleared. ItemName={itemName}, Count={count}");
+        if (icon == null) return;
         itemName = "";
         count = 0;
         icon.sprite = null;

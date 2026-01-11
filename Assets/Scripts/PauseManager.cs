@@ -28,8 +28,11 @@ public class PauseManager : MonoBehaviour
         else Destroy(gameObject);
 
         controls = new PlayerControls();
-        playerController.controls = controls;
+
+        if (playerController != null)
+            playerController.controls = controls;
     }
+
 
     void OnEnable()
     {
@@ -46,15 +49,18 @@ public class PauseManager : MonoBehaviour
 
     void OnDisable()
     {
-        controls.Global.Pause.performed -= OnPause;
-        controls.Global.Disable();
+        if (controls != null)
+        {
+            controls.Global.Pause.performed -= OnPause;
+            controls.Global.Disable();
 
-        controls.UI.Navigate.performed -= OnNavigate;
-        controls.UI.Submit.performed -= OnSubmit;
-        controls.UI.Cancel.performed -= OnCancel;
-        controls.UI.Disable();
+            controls.UI.Navigate.performed -= OnNavigate;
+            controls.UI.Submit.performed -= OnSubmit;
+            controls.UI.Cancel.performed -= OnCancel;
+            controls.UI.Disable();
 
-        controls.Player.Disable();
+            controls.Player.Disable();
+        }
     }
 
     private void OnNavigate(InputAction.CallbackContext ctx)

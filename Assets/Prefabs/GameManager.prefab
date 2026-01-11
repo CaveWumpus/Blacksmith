@@ -10,9 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1792614438324394526}
   - component: {fileID: 7385302018009372363}
-  - component: {fileID: 8339360695730906909}
-  - component: {fileID: 8824823134082828968}
-  - component: {fileID: 6438160991126485174}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -50,48 +47,3 @@ MonoBehaviour:
   gold: 0
   reputation: 0
   unlockedRecipes: []
---- !u!114 &8339360695730906909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2519609522879721156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13d58e4a751f7b14ba7fd6a2979583e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  slotCount: 24
-  maxStackSize: 20
-  backpackPanel: {fileID: 0}
-  inventorySlotPrefab: {fileID: 357655118819480045, guid: 04281796ed7b22745ae8af0e18bf60a7, type: 3}
---- !u!114 &8824823134082828968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2519609522879721156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 834653c53d2e7f741a494a1586e36f12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RelicInventory
-  relicSlotCount: 12
-  relicPanel: {fileID: 0}
-  relicSlotPrefab: {fileID: 4824355904248913747, guid: f743714b7a50a7543972204bb8695faa, type: 3}
---- !u!114 &6438160991126485174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2519609522879721156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0eacf0a4e355484e85e5eb1d6e8e0ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PauseManager
-  pauseMenuPanel: {fileID: 0}
-  inventoryToggleUI: {fileID: 0}

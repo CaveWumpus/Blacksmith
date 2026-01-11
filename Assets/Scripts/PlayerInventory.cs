@@ -148,22 +148,40 @@ public class PlayerInventory : MonoBehaviour
                 int index = row * cols + col;
                 if (index >= uiSlots.Count) continue;
 
+                var slotUI = uiSlots[index];
+                if (slotUI == null) continue; // NEW: skip destroyed slots
+
                 var button = uiSlots[index].GetComponent<Button>();
                 if (button == null) continue;
 
                 var nav = new Navigation { mode = Navigation.Mode.Explicit };
 
                 if (row > 0 && (row - 1) * cols + col < uiSlots.Count)
-                    nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
-
+                {
+                    var neighbor = uiSlots[(row - 1) * cols + col];
+                    if (neighbor != null)
+                        nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
+                }
                 if (row < rows - 1 && (row + 1) * cols + col < uiSlots.Count)
-                    nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
+                {
+                    var neighbor = uiSlots[(row + 1) * cols + col];
+                    if (neighbor != null)
+                        nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
+                }
 
                 if (col > 0 && row * cols + (col - 1) < uiSlots.Count)
-                    nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
+                {
+                    var neighbor = uiSlots[row * cols + (col - 1)];
+                    if (neighbor != null)
+                        nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
+                }
 
                 if (col < cols - 1 && row * cols + (col + 1) < uiSlots.Count)
-                    nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
+                {
+                    var neighbor = uiSlots[row * cols + (col + 1)];
+                    if (neighbor != null)
+                        nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
+                }
 
                 button.navigation = nav;
             }

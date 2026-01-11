@@ -27,6 +27,10 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
+        // ✅ Ensure controls is always initialized
+        if (controls == null)
+            controls = new PlayerControls();
+
         if (miningIndicatorPrefab != null)
         {
             miningIndicatorInstance = Instantiate(miningIndicatorPrefab);
@@ -35,15 +39,32 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    void OnEnable()
+    {
+        if (controls != null)
+        {
+            controls.Player.Enable();
+            Debug.Log("Player controls enabled in MineScene");
+        }
+    }
+
+    void OnDisable()
+    {
+        if (controls != null)
+            controls.Player.Disable();
+    }
+
     //void OnEnable() => controls.Player.Enable();
     //void OnDisable() => controls.Player.Disable();
 
     void Start()
     {
-        controls.Player.Move.performed += ctx => movement = ctx.ReadValue<Vector2>();
-        controls.Player.Jump.performed += ctx => Jump();
-        controls.Player.Mine.performed += ctx => Mine();
-        
+        if (controls != null)
+        {
+            controls.Player.Move.performed += ctx => movement = ctx.ReadValue<Vector2>();
+            controls.Player.Jump.performed += ctx => Jump();
+            controls.Player.Mine.performed += ctx => Mine();
+        }
     }
 
     void FixedUpdate()
