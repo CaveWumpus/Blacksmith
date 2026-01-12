@@ -39,6 +39,14 @@ public class InventoryToggleUI : MonoBehaviour
         }
     }
 
+    public void HideAllPanels()
+    {
+        backpackPanel.SetActive(false);
+        relicPanel.SetActive(false);
+        IsBackpackActive = false;
+    }
+
+
     public void ToggleLeftRight(Vector2 nav)
     {
         if (nav.x > 0.7f)

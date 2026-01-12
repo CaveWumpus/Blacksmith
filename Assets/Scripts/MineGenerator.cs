@@ -17,6 +17,9 @@ public class MineGenerator : MonoBehaviour
     public Transform player;
     public int playerLevel = 1; // progression level
 
+    [Header("Exit Settings")]
+    public GameObject exitTriggerPrefab; // assign ExitTrigger prefab here
+
     private bool[,] grid;
     private Vector2 spawnPoint;
     private int startX, startY;
@@ -100,6 +103,35 @@ public class MineGenerator : MonoBehaviour
             }
         }
 
+        // Step 5b: Place exit trigger at the carved opening
+        if (exitTriggerPrefab != null && tilemap != null)
+        {
+            // Pick the cell in the middle of the opening
+            Vector3Int cellPos;
+            if (startOnLeft)
+                cellPos = new Vector3Int(0, startY + 2, 0); // left wall opening
+            else
+                cellPos = new Vector3Int(width - 1, startY + 2, 0); // right wall opening
+
+            // Convert cell coordinates to world position
+            Vector3 exitPos = tilemap.GetCellCenterWorld(cellPos);
+
+            // Spawn the trigger prefab at the correct world position
+            GameObject trigger = Instantiate(exitTriggerPrefab, exitPos, Quaternion.identity);
+
+            // Adjust collider size to cover the 4‑tile tall opening
+            BoxCollider2D box = trigger.GetComponent<BoxCollider2D>();
+            if (box != null)
+            {
+                box.isTrigger = true;
+                box.size = new Vector2(1f, 4f);   // 1 tile wide, 4 tiles tall
+                box.offset = Vector2.zero;        // center on prefab origin
+            }
+        }
+
+
+
+        
         // Save spawn point in center of room
         spawnPoint = new Vector2(startX + 2.5f, startY + 2.5f);
 

@@ -14,10 +14,19 @@ public class PlayerInventory : MonoBehaviour
     public Transform inventoryPanel;   // drag PlayerInventoryPanel here
     public GameObject slotPrefab;      // drag PlayerSlotPrefab here
 
+    public List<ItemStack> oreStacks = new List<ItemStack>(); // each type of ore
+    public List<ItemStack> gemStacks = new List<ItemStack>(); // each type of gem
+
+    [System.Serializable]
+    public class ItemStack
+    {
+        public string itemName;
+        public int count;
+    }
+
     private List<PlayerSlot> slots = new List<PlayerSlot>();
     private List<InventorySlotUI> uiSlots = new List<InventorySlotUI>();
     public List<InventorySlotUI> UISlots => uiSlots;
-    //public IReadOnlyList<InventorySlotUI> UISlots => uiSlots;
 
     [Header("Stack Settings")]
     public int maxStackSize = 20;
@@ -41,7 +50,6 @@ public class PlayerInventory : MonoBehaviour
 
     void Start()
     {
-        // Wire navigation AFTER slots exist
         int rows = Mathf.CeilToInt((float)slotCount / columns);
         WireSlotNavigation(rows, columns);
     }
@@ -62,6 +70,8 @@ public class PlayerInventory : MonoBehaviour
                 uiSlots[i].SetSlot(icon, slots[i].count, itemName);
                 remaining -= toAdd;
 
+                UpdateSummaryStacks(itemName, toAdd);
+
                 if (remaining <= 0) return;
             }
         }
@@ -79,6 +89,8 @@ public class PlayerInventory : MonoBehaviour
 
                 uiSlots[i].SetSlot(icon, toAdd, itemName);
                 remaining -= toAdd;
+
+                UpdateSummaryStacks(itemName, toAdd);
             }
         }
     }
@@ -93,6 +105,8 @@ public class PlayerInventory : MonoBehaviour
                 slots[i].itemName = "";
                 slots[i].count = 0;
                 uiSlots[i].ClearSlot();
+
+                UpdateSummaryStacks(itemName, -count);
                 return;
             }
         }
@@ -135,6 +149,31 @@ public class PlayerInventory : MonoBehaviour
             fromSlot.count = tempCount;
             uiSlots[fromIndex].SetSlot(tempIcon, tempCount, tempName);
         }
+
+        // Totals don’t change on move, so no UpdateSummaryStacks needed here
+    }
+
+    private void UpdateSummaryStacks(string itemName, int amount)
+    {
+        bool isOre = itemName.ToLower().Contains("ore");
+        List<ItemStack> targetList = isOre ? oreStacks : gemStacks;
+
+        var stack = targetList.Find(s => s.itemName == itemName);
+        if (stack != null)
+        {
+            stack.count += amount;
+            if (stack.count <= 0)
+            {
+                targetList.Remove(stack);
+            }
+        }
+        else if (amount > 0)
+        {
+            targetList.Add(new ItemStack { itemName = itemName, count = amount });
+        }
+
+        // Debug log to confirm updates
+        Debug.Log($"Updated {itemName}: {amount}. OreStacks={string.Join(", ", oreStacks.ConvertAll(s => $"{s.itemName}:{s.count}"))}, GemStacks={string.Join(", ", gemStacks.ConvertAll(s => $"{s.itemName}:{s.count}"))}");
     }
 
     public void WireSlotNavigation(int rows, int cols)
@@ -149,7 +188,7 @@ public class PlayerInventory : MonoBehaviour
                 if (index >= uiSlots.Count) continue;
 
                 var slotUI = uiSlots[index];
-                if (slotUI == null) continue; // NEW: skip destroyed slots
+                if (slotUI == null) continue;
 
                 var button = uiSlots[index].GetComponent<Button>();
                 if (button == null) continue;
@@ -160,27 +199,27 @@ public class PlayerInventory : MonoBehaviour
                 {
                     var neighbor = uiSlots[(row - 1) * cols + col];
                     if (neighbor != null)
-                        nav.selectOnUp = uiSlots[(row - 1) * cols + col].GetComponent<Button>();
+                        nav.selectOnUp = neighbor.GetComponent<Button>();
                 }
                 if (row < rows - 1 && (row + 1) * cols + col < uiSlots.Count)
                 {
                     var neighbor = uiSlots[(row + 1) * cols + col];
                     if (neighbor != null)
-                        nav.selectOnDown = uiSlots[(row + 1) * cols + col].GetComponent<Button>();
+                        nav.selectOnDown = neighbor.GetComponent<Button>();
                 }
 
                 if (col > 0 && row * cols + (col - 1) < uiSlots.Count)
                 {
                     var neighbor = uiSlots[row * cols + (col - 1)];
                     if (neighbor != null)
-                        nav.selectOnLeft = uiSlots[row * cols + (col - 1)].GetComponent<Button>();
+                        nav.selectOnLeft = neighbor.GetComponent<Button>();
                 }
 
                 if (col < cols - 1 && row * cols + (col + 1) < uiSlots.Count)
                 {
                     var neighbor = uiSlots[row * cols + (col + 1)];
                     if (neighbor != null)
-                        nav.selectOnRight = uiSlots[row * cols + (col + 1)].GetComponent<Button>();
+                        nav.selectOnRight = neighbor.GetComponent<Button>();
                 }
 
                 button.navigation = nav;

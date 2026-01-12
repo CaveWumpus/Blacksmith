@@ -11,13 +11,48 @@ public class PauseManager : MonoBehaviour
 
     private PlayerControls controls;
     private bool isPaused = false;
+    private bool navHeld = false;
 
     public enum PauseMenuMode { PanelSelect, Inventory }
+    // Add a new enum for panel cycling
+    public enum PanelType
+    {
+        Backpack,
+        Relic,
+        EvacuationPrompt
+    }
+    private PanelType currentPanel = PanelType.Backpack;
+
     public enum InventoryMode { Navigation, ContextMenu, MovePending }
 
     public PauseMenuMode currentMode = PauseMenuMode.PanelSelect;
     public InventoryMode inventoryMode = InventoryMode.Navigation;
 
+    [Header("Evacuation UI")]
+    public GameObject evacuationPromptPanel;
+    public TMPro.TextMeshProUGUI evacuationHeaderText;
+    public TMPro.TextMeshProUGUI evacuationPromptText;
+
+    public GameObject evacuationYesButton;
+    public GameObject evacuationNoButton;
+    public GameObject evacuationConfirmYesButton;
+    public GameObject evacuationConfirmNoButton;
+    public GameObject evacuationInitialYesButton;
+    public GameObject evacuationInitialNoButton;
+
+    private enum EvacuationStep { InitialPrompt, ConfirmPrompt }
+    private EvacuationStep currentEvacuationStep = EvacuationStep.InitialPrompt;
+
+
+    [Header("Evacuation Settings")]
+    [Range(0,100)] public int evacuationLossPercent = 10;
+
+    //[Header("Inventory Panels")]
+    //public GameObject playerInventoryPanel;  // assign BackpackPanel in Inspector
+    //public GameObject relicPanel;            // assign RelicPanel in Inspector
+
+
+    
     // Source slots for move
     public InventorySlotUI moveSourceSlot;
     public RelicSlotUI moveSourceRelicSlot;
@@ -69,16 +104,150 @@ public class PauseManager : MonoBehaviour
         {
             Vector2 nav = ctx.ReadValue<Vector2>();
 
-            // Only care about left/right input
-            if (Mathf.Abs(nav.x) > 0.7f)
+            if (!navHeld && Mathf.Abs(nav.x) > 0.7f)
             {
-                inventoryToggleUI.ToggleLeftRight(nav);
+                if (nav.x < 0) CycleLeft();
+                else CycleRight();
+                navHeld = true; // lock until released
             }
+            else if (Mathf.Abs(nav.x) < 0.2f)
+            {
+                navHeld = false; // reset when stick returns to center
+            }
+        }
+    }
+
+    private void CycleLeft()
+    {
+        if (currentPanel == PanelType.Backpack)
+            currentPanel = PanelType.Relic;
+        else if (currentPanel == PanelType.Relic)
+            currentPanel = PanelType.EvacuationPrompt;
+        else
+            currentPanel = PanelType.Backpack;
+
+        ShowCurrentPanel();
+    }
+
+    private void CycleRight()
+    {
+        if (currentPanel == PanelType.Backpack)
+            currentPanel = PanelType.EvacuationPrompt;
+        else if (currentPanel == PanelType.EvacuationPrompt)
+            currentPanel = PanelType.Relic;
+        else
+            currentPanel = PanelType.Backpack;
+
+        ShowCurrentPanel();
+    }
+
+    private void ShowCurrentPanel()
+    {
+        // Backpack panel
+        if (currentPanel == PanelType.Backpack)
+        {
+            inventoryToggleUI.ShowBackpack();
+            evacuationPromptPanel.SetActive(false);
+        }
+        // Relic panel
+        else if (currentPanel == PanelType.Relic)
+        {
+            inventoryToggleUI.ShowRelics();
+            evacuationPromptPanel.SetActive(false);
+        }
+        // Evacuation prompt panel
+        else if (currentPanel == PanelType.EvacuationPrompt)
+        {
+            inventoryToggleUI.HideAllPanels();   // turn off Backpack + Relic
+            evacuationPromptPanel.SetActive(true);
+            BuildEvacuationText();
+            EventSystem.current.SetSelectedGameObject(evacuationInitialYesButton);
+        }
+    }
+
+    public void ShowEvacuationPrompt()
+    {
+        evacuationPromptPanel.SetActive(true);
+        currentEvacuationStep = EvacuationStep.InitialPrompt;
+
+        evacuationHeaderText.text = "Would you like to evacuate to Shop?";
+        evacuationPromptText.text = ""; // 🔹 keep empty until Confirm step
+
+        evacuationYesButton.SetActive(true);
+        evacuationNoButton.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        StartCoroutine(SetFocusNextFrame(evacuationYesButton));
+    }
+
+
+
+    public void OnEvacuationYes()
+    {
+        if (currentEvacuationStep == EvacuationStep.InitialPrompt)
+        {
+            // 🔹 Move to Confirm step
+            currentEvacuationStep = EvacuationStep.ConfirmPrompt;
+            evacuationHeaderText.text = "You will lose the following resources:";
+
+            // Build and show breakdown only now
+            evacuationPromptText.text = BuildEvacuationBreakdown();
+
+            EventSystem.current.SetSelectedGameObject(null);
+            StartCoroutine(SetFocusNextFrame(evacuationYesButton));
+        }
+        else if (currentEvacuationStep == EvacuationStep.ConfirmPrompt)
+        {
+            // 🔹 Apply losses and load Shop
+            foreach (var stack in PlayerInventory.Instance.oreStacks)
+            {
+                int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+                stack.count -= lost;
+            }
+            foreach (var stack in PlayerInventory.Instance.gemStacks)
+            {
+                int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+                stack.count -= lost;
+            }
+
+            Time.timeScale = 1f;
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ShopScene");
+        }
+    }
+
+
+
+    public void OnEvacuationNo()
+    {
+        if (currentEvacuationStep == EvacuationStep.InitialPrompt)
+        {
+            // 🔹 Cancel evacuation completely
+            CancelEvacuation();
+        }
+        else if (currentEvacuationStep == EvacuationStep.ConfirmPrompt)
+        {
+            // 🔹 Reset back to initial prompt instead of closing
+            currentEvacuationStep = EvacuationStep.InitialPrompt;
+            evacuationHeaderText.text = "Would you like to evacuate to Shop?";
+            evacuationPromptText.text = "";
+
+            EventSystem.current.SetSelectedGameObject(null);
+            StartCoroutine(SetFocusNextFrame(evacuationYesButton));
         }
     }
 
     private void OnSubmit(InputAction.CallbackContext ctx)
     {
+        // Always check what is currently selected
+        var selectedGO = EventSystem.current.currentSelectedGameObject;
+
+        // If a Unity UI Button is selected, let its onClick handle it
+        if (selectedGO != null && selectedGO.GetComponent<UnityEngine.UI.Button>() != null)
+        {
+            selectedGO.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+            return;
+        }
+
         Debug.Log($"OnSubmit called. Mode={currentMode}, InvMode={inventoryMode}");
 
         // 1. Enter inventory from PanelSelect
@@ -107,12 +276,10 @@ public class PauseManager : MonoBehaviour
         // 2. In inventory navigation: open context menu for selected slot
         if (currentMode == PauseMenuMode.Inventory && inventoryMode == InventoryMode.Navigation)
         {
-            var selected = EventSystem.current.currentSelectedGameObject;
-            Debug.Log($"Inventory Navigation: Selected={selected?.name}");
-            if (selected == null) return;
+            Debug.Log($"Inventory Navigation: Selected={selectedGO?.name}");
+            if (selectedGO == null) return;
 
-            // ✅ Use GetComponentInParent to catch child selections
-            var playerSlot = selected.GetComponent<InventorySlotUI>() ?? selected.GetComponentInParent<InventorySlotUI>();
+            var playerSlot = selectedGO.GetComponent<InventorySlotUI>() ?? selectedGO.GetComponentInParent<InventorySlotUI>();
             if (playerSlot != null)
             {
                 Debug.Log("Opening InventoryContextMenu for player slot.");
@@ -120,7 +287,7 @@ public class PauseManager : MonoBehaviour
                 return;
             }
 
-            var relicSlot = selected.GetComponent<RelicSlotUI>() ?? selected.GetComponentInParent<RelicSlotUI>();
+            var relicSlot = selectedGO.GetComponent<RelicSlotUI>() ?? selectedGO.GetComponentInParent<RelicSlotUI>();
             if (relicSlot != null)
             {
                 Debug.Log("Opening RelicContextMenu for relic slot.");
@@ -128,7 +295,6 @@ public class PauseManager : MonoBehaviour
                 return;
             }
 
-            // ✅ If neither slot type found, log error
             Debug.LogError("OnSubmit: Selected object has no slot UI component!");
             return;
         }
@@ -136,27 +302,15 @@ public class PauseManager : MonoBehaviour
         // 3. Handle MovePending
         if (currentMode == PauseMenuMode.Inventory && inventoryMode == InventoryMode.MovePending)
         {
-            var selected = EventSystem.current.currentSelectedGameObject;
-            Debug.Log($"[MovePending] Submit pressed. SourceSlot={moveSourceSlot?.name ?? "null"}, SourceRelic={moveSourceRelicSlot?.name ?? "null"}, Target={selected?.name ?? "null"}");
+            Debug.Log($"[MovePending] Submit pressed. SourceSlot={moveSourceSlot?.name ?? "null"}, SourceRelic={moveSourceRelicSlot?.name ?? "null"}, Target={selectedGO?.name ?? "null"}");
 
             // Player inventory move
             if (moveSourceSlot != null)
             {
-                var targetSlot = selected?.GetComponent<InventorySlotUI>() ?? selected?.GetComponentInParent<InventorySlotUI>();
-                Debug.Log($"[MovePending] Player move: TargetSlot={targetSlot?.name ?? "null"}");
-
+                var targetSlot = selectedGO?.GetComponent<InventorySlotUI>() ?? selectedGO?.GetComponentInParent<InventorySlotUI>();
                 if (targetSlot != null)
                 {
-                    if (targetSlot.IsEmpty())
-                    {
-                        Debug.Log($"[MovePending] Moving {moveSourceSlot.itemName} x{moveSourceSlot.count} into empty slot {targetSlot.name}");
-                        PlayerInventory.Instance.MoveItem(moveSourceSlot, targetSlot);
-                    }
-                    else
-                    {
-                        Debug.Log($"[MovePending] Swapping {moveSourceSlot.itemName} with {targetSlot.itemName}");
-                        PlayerInventory.Instance.MoveItem(moveSourceSlot, targetSlot);
-                    }
+                    PlayerInventory.Instance.MoveItem(moveSourceSlot, targetSlot);
                 }
                 moveSourceSlot = null;
                 inventoryMode = InventoryMode.Navigation;
@@ -167,21 +321,10 @@ public class PauseManager : MonoBehaviour
             // Relic inventory move
             if (moveSourceRelicSlot != null)
             {
-                var targetRelic = selected?.GetComponent<RelicSlotUI>() ?? selected?.GetComponentInParent<RelicSlotUI>();
-                Debug.Log($"[MovePending] Relic move: TargetRelic={targetRelic?.name ?? "null"}");
-
+                var targetRelic = selectedGO?.GetComponent<RelicSlotUI>() ?? selectedGO?.GetComponentInParent<RelicSlotUI>();
                 if (targetRelic != null)
                 {
-                    if (targetRelic.IsEmpty())
-                    {
-                        Debug.Log($"[MovePending] Moving {moveSourceRelicSlot.relicName} into empty relic slot {targetRelic.name}");
-                        RelicInventory.Instance.MoveItem(moveSourceRelicSlot, targetRelic);
-                    }
-                    else
-                    {
-                        Debug.Log($"[MovePending] Swapping {moveSourceRelicSlot.relicName} with {targetRelic.relicName}");
-                        RelicInventory.Instance.MoveItem(moveSourceRelicSlot, targetRelic);
-                    }
+                    RelicInventory.Instance.MoveItem(moveSourceRelicSlot, targetRelic);
                 }
                 moveSourceRelicSlot = null;
                 inventoryMode = InventoryMode.Navigation;
@@ -189,9 +332,8 @@ public class PauseManager : MonoBehaviour
                 return;
             }
         }
-
-
     }
+
 
 
 
@@ -264,18 +406,113 @@ public class PauseManager : MonoBehaviour
         inventoryToggleUI.ShowBackpack();
     }
 
+    private void BuildEvacuationText()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+        foreach (var stack in PlayerInventory.Instance.oreStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            sb.AppendLine($"{stack.itemName}: Lose {lost} (from {stack.count})");
+        }
+
+        foreach (var stack in PlayerInventory.Instance.gemStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            sb.AppendLine($"{stack.itemName}: Lose {lost} (from {stack.count})");
+        }
+
+        //evacuationPromptText.text = sb.ToString();
+    }
+
+
+    public void ConfirmEvacuation()
+    {
+        foreach (var stack in PlayerInventory.Instance.oreStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            stack.count -= lost;
+        }
+
+        foreach (var stack in PlayerInventory.Instance.gemStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            stack.count -= lost;
+        }
+
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("ShopScene");
+    }
+
+    public void CancelEvacuation()
+    {
+        evacuationPromptPanel.SetActive(false);
+        currentEvacuationStep = EvacuationStep.InitialPrompt;
+        evacuationPromptText.text = "";
+        currentPanel = PanelType.Backpack;
+        ShowCurrentPanel();
+    }
 
     public void ResumeGame()
     {
         isPaused = false;
         Time.timeScale = 1f;
         pauseMenuPanel.SetActive(false);
+        evacuationPromptPanel.SetActive(false);
+        currentEvacuationStep = EvacuationStep.InitialPrompt;
+        evacuationPromptText.text = "";
 
         controls.UI.Disable();
         controls.Player.Enable();
 
         InputSystem.ResetDevice(Gamepad.current);
+    }
+
+    private System.Collections.IEnumerator SetFocusNextFrame(GameObject button)
+    {
+        yield return null; // wait one frame
+        EventSystem.current.SetSelectedGameObject(button);
+    }
+
+    private string BuildEvacuationBreakdown()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        foreach (var stack in PlayerInventory.Instance.oreStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            sb.AppendLine($"{stack.itemName}: Lose {lost} (from {stack.count})");
+        }
+
+        foreach (var stack in PlayerInventory.Instance.gemStacks)
+        {
+            int lost = Mathf.FloorToInt(stack.count * evacuationLossPercent / 100f);
+            sb.AppendLine($"{stack.itemName}: Lose {lost} (from {stack.count})");
+        }
+
+        return sb.ToString();
+    }
+
+    public void ForceEvacuationOnTimer()
+    {
+        Time.timeScale = 0f;
+
+        evacuationPromptPanel.SetActive(true);
+        currentEvacuationStep = EvacuationStep.ConfirmPrompt;
+
+        evacuationHeaderText.text = "Time expired! You must evacuate.";
+        evacuationPromptText.text = BuildEvacuationBreakdown();
+
+        pauseMenuPanel.SetActive(false);
+
+        // Disable pause input so Start button does nothing
+        controls.Global.Pause.Disable();
+
+        // 🔹 Hide the No button so player cannot decline
+        evacuationNoButton.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        StartCoroutine(SetFocusNextFrame(evacuationYesButton));
     }
 
     public bool IsPaused => isPaused;
