@@ -33,8 +33,15 @@ public class PlayerInventory : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);   // <-- add this line here
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
         // Initialize empty slots
         for (int i = 0; i < slotCount; i++)
@@ -52,6 +59,13 @@ public class PlayerInventory : MonoBehaviour
     {
         int rows = Mathf.CeilToInt((float)slotCount / columns);
         WireSlotNavigation(rows, columns);
+
+
+        // --- TEST DATA ---
+        // These will appear in your backpack immediately when entering play mode
+        AddItem(null, "Iron Ore", 10);
+        AddItem(null, "Gold Ore", 5);
+        AddItem(null, "Ruby Gem", 2);
     }
 
     public void AddItem(Sprite icon, string itemName, int count = 1)
