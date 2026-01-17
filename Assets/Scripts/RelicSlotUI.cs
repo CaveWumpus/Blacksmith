@@ -23,18 +23,9 @@ public class RelicSlotUI : MonoBehaviour
 
     public void OnSlotClicked()
     {
-        var pm = PauseManager.Instance;
-
-        if (pm.currentMode == PauseManager.PauseMenuMode.Inventory &&
-            pm.inventoryMode == PauseManager.InventoryMode.Navigation)
-        {
-            RelicContextMenu.Instance.Open(this);
-        }
-        else if (pm.inventoryMode == PauseManager.InventoryMode.MovePending)
-        {
-            // Move logic is handled in PauseManager.OnSubmit for relics
-        }
+        // No longer used in controller-based navigation
     }
+
 
     public bool IsEmpty()
     {

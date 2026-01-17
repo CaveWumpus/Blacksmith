@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79573dfa09f24564498981f1b27ea080, type: 3}
   m_Name: IronOreVein
   m_EditorClassIdentifier: Assembly-CSharp::MineableTile
-  m_Sprite: {fileID: -2413806693520163455, guid: d790cbdb5220823419c0b921a8518028, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 3444923591c16634ea34ec577f3f8dda, type: 3}
   m_Color: {r: 0.4245283, g: 0.42252582, b: 0.42252582, a: 1}
   m_Transform:
     e00: 1

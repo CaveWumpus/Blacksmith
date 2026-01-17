@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79573dfa09f24564498981f1b27ea080, type: 3}
   m_Name: SoftRockTile
   m_EditorClassIdentifier: Assembly-CSharp::MineableTile
-  m_Sprite: {fileID: 7482667652216324306, guid: 0150d9c2440d50e41b4412b13d88205d, type: 3}
+  m_Sprite: {fileID: 21300006, guid: 94b9aae5592f1fa48a1f78e8ed6f50f7, type: 3}
   m_Color: {r: 0.9293861, g: 0.9528302, b: 0.049439307, a: 1}
   m_Transform:
     e00: 1

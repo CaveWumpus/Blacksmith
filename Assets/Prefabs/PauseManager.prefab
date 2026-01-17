@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1692535537703897715}
   - component: {fileID: 7251840236371001285}
-  - component: {fileID: 1694856557640467678}
-  - component: {fileID: 5660547445300820714}
   - component: {fileID: 6750393541746784004}
   m_Layer: 0
   m_Name: PauseManager
@@ -49,56 +47,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseManager
   pauseMenuPanel: {fileID: 0}
   inventoryToggleUI: {fileID: 0}
-  playerController: {fileID: 0}
+  inventoryController: {fileID: 0}
+  evacuationController: {fileID: 0}
   currentMode: 0
-  inventoryMode: 0
-  evacuationPromptPanel: {fileID: 0}
-  evacuationHeaderText: {fileID: 0}
-  evacuationPromptText: {fileID: 0}
-  evacuationYesButton: {fileID: 0}
-  evacuationNoButton: {fileID: 0}
-  evacuationConfirmYesButton: {fileID: 0}
-  evacuationConfirmNoButton: {fileID: 0}
-  evacuationInitialYesButton: {fileID: 0}
-  evacuationInitialNoButton: {fileID: 0}
-  evacuationLossPercent: 10
-  moveSourceSlot: {fileID: 0}
-  moveSourceRelicSlot: {fileID: 0}
---- !u!114 &1694856557640467678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3890813197858878953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13d58e4a751f7b14ba7fd6a2979583e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  slotCount: 24
-  columns: 5
-  inventoryPanel: {fileID: 0}
-  slotPrefab: {fileID: 357655118819480045, guid: 04281796ed7b22745ae8af0e18bf60a7, type: 3}
-  oreStacks: []
-  gemStacks: []
-  maxStackSize: 20
---- !u!114 &5660547445300820714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3890813197858878953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 834653c53d2e7f741a494a1586e36f12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RelicInventory
-  relicSlotCount: 12
-  columns: 6
-  relicPanel: {fileID: 0}
-  relicSlotPrefab: {fileID: 4824355904248913747, guid: f743714b7a50a7543972204bb8695faa, type: 3}
 --- !u!114 &6750393541746784004
 MonoBehaviour:
   m_ObjectHideFlags: 0
