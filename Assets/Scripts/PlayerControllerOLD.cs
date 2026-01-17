@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
@@ -179,4 +179,4 @@ public class PlayerController : MonoBehaviour
     {
         //Debug.Log("Spawn collision with: " + col.collider.name);
     }
-}
+}*/
