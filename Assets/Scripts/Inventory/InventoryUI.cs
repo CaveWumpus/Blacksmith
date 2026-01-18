@@ -63,7 +63,7 @@ public class InventoryUI : MonoBehaviour
                 rules = obj.AddComponent<SlotRules>();
 
             if (i < backpackSlotCount)
-                rules.slotType = SlotType.Backpack;
+                rules.slotType = SlotType.General;
             else if (i < backpackSlotCount + relicSlotCount)
                 rules.slotType = SlotType.Relic;
             else

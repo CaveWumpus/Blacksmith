@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum SlotType { Backpack, Relic, Trash }
+public enum SlotType { General, Relic, Trash }
 
 public class SlotRules : MonoBehaviour
 {
     public SlotType slotType;
 
     [Header("Slot Colors")]
-    public Color backpackColor = Color.white;
+    public Color generalColor = Color.white;
     public Color relicColor = Color.green;
     public Color trashColor = Color.black;
 
@@ -30,8 +30,8 @@ public class SlotRules : MonoBehaviour
 
         switch (slotType)
         {
-            case SlotType.Backpack:
-                background.color = backpackColor;
+            case SlotType.General:
+                background.color = generalColor;
                 break;
 
             case SlotType.Relic:
@@ -47,15 +47,14 @@ public class SlotRules : MonoBehaviour
     public bool Accepts(ItemDefinition item)
     {
         if (slotType == SlotType.Trash)
-            return true;
+            return true; // anything can be trashed
 
         if (slotType == SlotType.Relic)
-            return item.isRelic;
+            return item.isRelic; // only relics allowed
 
-        if (slotType == SlotType.Backpack)
-            return true; // allow both relics and normal items
+        if (slotType == SlotType.General)
+            return true; // ore, gems, relics, recipes, patterns, everything
 
         return false;
     }
-
 }

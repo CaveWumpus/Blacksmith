@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d670234a44e1d9e45b090ff76e2c776b, type: 3}
+  m_Name: HardRock
+  m_EditorClassIdentifier: Assembly-CSharp::RockDefinition
+  tileName: Hard Rock
+  tileType: 1
+  tileAsset: {fileID: 11400000, guid: 12beccda482590e4db975a7c40dedc2a, type: 2}
+  levelStart: 1
+  levelEnd: 999
+  minDurability: 4
+  maxDurability: 4
+  spawnWeight: 2
+  chanceRegularOre: 0.15
+  chanceRareOre: 0.05
+  chanceExoticOre: 0.01
+  chanceRegularGem: 0.08
+  chanceRareGem: 0.02
+  chanceExoticGem: 0.005
+  chanceRelic: 0.03
+  chanceRecipe: 0.03
+  chancePattern: 0.03
+  chanceNothing: 0.7

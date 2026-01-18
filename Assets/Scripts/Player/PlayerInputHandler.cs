@@ -68,11 +68,17 @@ public class PlayerInputHandler : MonoBehaviour
         // and should be consumed by other systems, then reset.
     }
 
-    private void LateUpdate()
-    {
+    //private void LateUpdate()
+    //{
         // Reset one-frame flags after other systems have had a chance to read them
-        jumpPressed  = false;
-        minePressed  = false;
+    //    jumpPressed  = false;
+    //    minePressed  = false;
+    //    pausePressed = false;
+    //}
+    private void FixedUpdate()
+    {
+        jumpPressed = false;
+        minePressed = false;
         pausePressed = false;
     }
 

@@ -6,146 +6,195 @@ public class TileDurabilityManager : MonoBehaviour
 {
     public static TileDurabilityManager Instance;
 
-    [Header("Vein Pools")]
-    public TilePool oreVeinPool;
-    public TilePool gemVeinPool;
-    public TilePool relicVeinPool;
+    [Header("Tile Definitions")]
+    public List<TileDefinition> allDefinitions;
 
+    private Dictionary<TileBase, TileDefinition> tileLookup = new Dictionary<TileBase, TileDefinition>();
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
-    private Dictionary<Vector3Int, MineableDrop> dropMap = new Dictionary<Vector3Int, MineableDrop>();
+    private Dictionary<Vector3Int, DropResult> dropMap = new Dictionary<Vector3Int, DropResult>();
 
     void Awake()
     {
         Instance = this;
+
+        // Build lookup table
+        foreach (var def in allDefinitions)
+        {
+            if (def.tileAsset != null)
+                tileLookup[def.tileAsset] = def;
+        }
     }
 
-    /// <summary>
-    /// Assign durability from TileDefinition (rock or vein).
-    /// </summary>
-    public void AssignDrop(Vector3Int cellPos, MineableDrop drop, TileDefinition def)
+    // ---------------------------------------------------------
+    // Assign durability + drop result from MineGenerator
+    // ---------------------------------------------------------
+    public void AssignTile(Vector3Int cellPos, TileDefinition def, DropResult drop)
     {
-        if (drop != null) dropMap[cellPos] = drop;
+        // Assign durability
+        int durability = 1;
 
-        if (def.randomDurabilityRange.x > 0 || def.randomDurabilityRange.y > 0)
-            durabilityMap[cellPos] = Random.Range(def.randomDurabilityRange.x, def.randomDurabilityRange.y + 1);
-        else
-            durabilityMap[cellPos] = def.fixedDurability;
+        if (def is RockDefinition rock)
+            durability = Random.Range(rock.minDurability, rock.maxDurability + 1);
 
-        //Debug.Log($"[AssignDrop] {def.tileName} at {cellPos} durability {durabilityMap[cellPos]}");
+        else if (def is VeinDefinition vein)
+            durability = Random.Range(vein.minDurability, vein.maxDurability + 1);
+
+        durabilityMap[cellPos] = durability;
+
+        // Assign drop result
+        dropMap[cellPos] = drop;
     }
 
-    /// <summary>
-    /// Damage a tile at the given cell position.
-    /// Rocks: no inventory add, only reveal vein when destroyed.
-    /// Ore/Gem veins: add item each hit until durability reaches 0.
-    /// Relic veins: add relic once, then clear tile immediately.
-    /// </summary>
+    // ---------------------------------------------------------
+    // Damage tile
+    // ---------------------------------------------------------
     public void Damage(Vector3Int cellPos, Tilemap tilemap)
     {
-        if (!durabilityMap.ContainsKey(cellPos)) return;
+        if (!durabilityMap.ContainsKey(cellPos))
+            return;
 
         durabilityMap[cellPos]--;
-        //Debug.Log($"[Damage] Cell {cellPos} hit. Remaining durability: {durabilityMap[cellPos]}");
 
-        if (dropMap.ContainsKey(cellPos))
+        TileBase tile = tilemap.GetTile(cellPos);
+        if (tile == null) return;
+
+        if (!tileLookup.TryGetValue(tile, out TileDefinition def))
+            return;
+
+        // Handle tile type
+        switch (def.tileType)
         {
-            MineableDrop drop = dropMap[cellPos];
-            TileBase currentTile = tilemap.GetTile(cellPos);
+            case TileType.Rock:
+                HandleRockDamage(cellPos, tilemap, def);
+                break;
 
-            // Ore/Gem veins: add item each hit
-            if (IsVeinTile(currentTile) && (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem))
-            {
-                PlayerInventory.Instance.AddItem(drop.icon, drop.dropName, 1);
-                //Debug.Log($"[Damage] Added {drop.dropName} to inventory");
-            }
+            case TileType.Ore:
+            case TileType.Gem:
+                HandleVeinDamage(cellPos, tilemap, def as VeinDefinition);
+                break;
 
-            // Relic veins: add relic once, then clear immediately
-            if (IsVeinTile(currentTile) && drop.dropType == DropType.Relic)
-            {
-                RelicInventory.Instance.AddRelic(drop);
-                //Debug.Log($"[Damage] Added relic {drop.dropName} to relic inventory");
+            case TileType.Relic:
+                HandleRelicTile(cellPos, tilemap, def as RelicDefinition);
+                break;
 
-                // Clear relic tile immediately
-                tilemap.SetTile(cellPos, null);
-                durabilityMap.Remove(cellPos);
-                dropMap.Remove(cellPos);
-                return;
-            }
-        }
+            case TileType.Recipe:
+                HandleRecipeTile(cellPos, tilemap, def as RecipeDefinition);
+                break;
 
-        if (durabilityMap.ContainsKey(cellPos) && durabilityMap[cellPos] <= 0)
-        {
-            BreakTile(cellPos, tilemap);
-        }
-    }
-
-    /// <summary>
-    /// Handles breaking a tile:
-    /// Rocks: reveal vein tile only.
-    /// Veins: clear tile when durability reaches 0.
-    /// </summary>
-    private void BreakTile(Vector3Int cellPos, Tilemap tilemap)
-    {
-        if (dropMap.ContainsKey(cellPos))
-        {
-            MineableDrop drop = dropMap[cellPos];
-            TileBase currentTile = tilemap.GetTile(cellPos);
-
-            // Rock breaking: reveal vein, no inventory add
-            if (IsRockTile(currentTile))
-            {
-                //Debug.Log($"[BreakTile] Rock at {cellPos} destroyed, revealing vein of type {drop.dropType}");
-
-                if (drop.dropType == DropType.Ore || drop.dropType == DropType.Gem || drop.dropType == DropType.Relic)
-                {
-                    TileDefinition veinDef = GetVeinDefinitionForDrop(drop.dropType);
-                    if (veinDef != null)
-                    {
-                        tilemap.SetTile(cellPos, veinDef.tileAsset);
-                        durabilityMap[cellPos] = Random.Range(
-                            veinDef.randomDurabilityRange.x,
-                            veinDef.randomDurabilityRange.y + 1
-                        );
-                        //Debug.Log($"[BreakTile] Spawned vein {veinDef.tileName} at {cellPos} with durability {durabilityMap[cellPos]}");
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                // Vein breaking: clear tile
-                //Debug.Log($"[BreakTile] Vein at {cellPos} destroyed, clearing tile.");
-                tilemap.SetTile(cellPos, null);
-                durabilityMap.Remove(cellPos);
-                dropMap.Remove(cellPos);
-            }
-        }
-        else
-        {
-            // No drop assigned: just clear tile
-            tilemap.SetTile(cellPos, null);
-            durabilityMap.Remove(cellPos);
+            case TileType.Pattern:
+                HandlePatternTile(cellPos, tilemap, def as PatternDefinition);
+                break;
         }
     }
 
-    private TileDefinition GetVeinDefinitionForDrop(DropType type)
+    // ---------------------------------------------------------
+    // ROCK DAMAGE → reveal vein or clear
+    // ---------------------------------------------------------
+    private void HandleRockDamage(Vector3Int cellPos, Tilemap tilemap, TileDefinition def)
     {
-        switch (type)
+        if (durabilityMap[cellPos] > 0)
+            return;
+
+        DropResult drop = dropMap[cellPos];
+
+        // If nothing was rolled → clear tile
+        if (drop.dropType == TileType.Ground)
         {
-            case DropType.Ore: return oreVeinPool.GetRandomTileDefinition();
-            case DropType.Gem: return gemVeinPool.GetRandomTileDefinition();
-            case DropType.Relic: return relicVeinPool.GetRandomTileDefinition();
-            default: return null;
+            ClearTile(cellPos, tilemap);
+            return;
+        }
+
+        // If ore/gem → spawn vein tile
+        if (drop.dropType == TileType.Ore || drop.dropType == TileType.Gem)
+        {
+            VeinDefinition vein = drop.vein;
+            tilemap.SetTile(cellPos, vein.tileAsset);
+
+            durabilityMap[cellPos] = Random.Range(vein.minDurability, vein.maxDurability + 1);
+            return;
+        }
+
+        // If relic/recipe/pattern → spawn special tile
+        if (drop.dropType == TileType.Relic)
+        {
+            tilemap.SetTile(cellPos, drop.relic.tileAsset);
+            durabilityMap[cellPos] = 1;
+            return;
+        }
+
+        if (drop.dropType == TileType.Recipe)
+        {
+            tilemap.SetTile(cellPos, drop.recipe.tileAsset);
+            durabilityMap[cellPos] = 1;
+            return;
+        }
+
+        if (drop.dropType == TileType.Pattern)
+        {
+            tilemap.SetTile(cellPos, drop.pattern.tileAsset);
+            durabilityMap[cellPos] = 1;
+            return;
         }
     }
 
-    private bool IsRockTile(TileBase tile)
+    // ---------------------------------------------------------
+    // VEIN DAMAGE → yield items until empty
+    // ---------------------------------------------------------
+    private void HandleVeinDamage(Vector3Int cellPos, Tilemap tilemap, VeinDefinition vein)
     {
-        return tile != null && tile.name.Contains("Rock");
+        if (vein == null) Debug.LogError("VEIN IS NULL at " + cellPos); if (vein != null && vein.item == null) Debug.LogError("VEIN.ITEM IS NULL for vein: " + vein.tileName); if (UnifiedInventoryController.Instance == null) Debug.LogError("INVENTORY CONTROLLER INSTANCE IS NULL");
+        
+        // Give item every hit
+        int yield = Random.Range(vein.minYield, vein.maxYield + 1);
+        UnifiedInventoryController.Instance.TryAddItem(vein.item, yield);
+
+        if (durabilityMap[cellPos] > 0)
+            return;
+
+        ClearTile(cellPos, tilemap);
     }
 
-    private bool IsVeinTile(TileBase tile)
+    // ---------------------------------------------------------
+    // RELIC TILE → collect once
+    // ---------------------------------------------------------
+    private void HandleRelicTile(Vector3Int cellPos, Tilemap tilemap, RelicDefinition relic)
     {
-        return tile != null && tile.name.Contains("Vein");
+        bool added = UnifiedInventoryController.Instance.TryAddRelic(relic.item);
+
+        if (!added)
+        {
+            Debug.Log($"No space for relic {relic.tileName} – TODO: spawn pickup here.");
+        }
+
+        ClearTile(cellPos, tilemap);
+    }
+
+
+    // ---------------------------------------------------------
+    // RECIPE TILE → unlock permanently
+    // ---------------------------------------------------------
+    private void HandleRecipeTile(Vector3Int cellPos, Tilemap tilemap, RecipeDefinition recipe) 
+    { 
+        RecipeManager.Instance.UnlockRecipe(recipe); 
+        ClearTile(cellPos, tilemap); 
+    }
+
+    // ---------------------------------------------------------
+    // PATTERN TILE → unlock permanently
+    // ---------------------------------------------------------
+    private void HandlePatternTile(Vector3Int cellPos, Tilemap tilemap, PatternDefinition pattern) 
+    { 
+        PatternManager.Instance.UnlockPattern(pattern); 
+        ClearTile(cellPos, tilemap); 
+    }
+
+    // ---------------------------------------------------------
+    // Clear tile + cleanup
+    // ---------------------------------------------------------
+    private void ClearTile(Vector3Int cellPos, Tilemap tilemap)
+    {
+        tilemap.SetTile(cellPos, null);
+        durabilityMap.Remove(cellPos);
+        dropMap.Remove(cellPos);
     }
 }

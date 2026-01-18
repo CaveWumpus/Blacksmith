@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d670234a44e1d9e45b090ff76e2c776b, type: 3}
+  m_Name: GroundRock
+  m_EditorClassIdentifier: Assembly-CSharp::RockDefinition
+  tileName: Ground Rock
+  tileType: 0
+  tileAsset: {fileID: 11400000, guid: 7959bc86ee95ac64bb81b94a2de72bea, type: 2}
+  levelStart: 1
+  levelEnd: 999
+  minDurability: 999
+  maxDurability: 999
+  spawnWeight: 0.5
+  chanceRegularOre: 0
+  chanceRareOre: 0
+  chanceExoticOre: 0
+  chanceRegularGem: 0
+  chanceRareGem: 0
+  chanceExoticGem: 0
+  chanceRelic: 0
+  chanceRecipe: 0
+  chancePattern: 0
+  chanceNothing: 1

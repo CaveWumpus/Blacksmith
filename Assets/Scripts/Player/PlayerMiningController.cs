@@ -17,6 +17,9 @@ public class PlayerMiningController : MonoBehaviour
     void Update()
     {
         mineTimer -= Time.deltaTime;
+        Debug.DrawRay(mineOrigin.position, GetMiningDirection() * mineRange, Color.red);
+        Debug.DrawRay(mineOrigin.position, Vector2.down * mineRange, Color.blue);
+        Debug.DrawRay(mineOrigin.position, Vector2.up * mineRange, Color.blue);
 
         if (input.minePressed && mineTimer <= 0)
         {
@@ -27,15 +30,23 @@ public class PlayerMiningController : MonoBehaviour
 
     void TryMine()
     {
+        
+
         Vector2 direction = GetMiningDirection();
         RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, mineRange, mineableLayer);
 
         if (hit.collider != null)
         {
+            Debug.DrawRay(hit.point, Vector3.up * 0.1f, Color.green, 0.2f);
             Tilemap tilemap = hit.collider.GetComponentInParent<Tilemap>();
             if (tilemap != null)
             {
-                Vector3Int cellPos = tilemap.WorldToCell(hit.point);
+                //Vector3 hitPos = hit.point + direction * 0.05f; // push slightly into the tile
+                //Vector3Int cellPos = tilemap.WorldToCell(hit.point);
+                //Vector2 direction = GetMiningDirection();
+                Vector3 hitPos = hit.point + direction * 0.05f;   // push slightly inside the tile
+                Vector3Int cellPos = tilemap.WorldToCell(hitPos);
+
                 TileDurabilityManager.Instance.Damage(cellPos, tilemap);
             }
         }

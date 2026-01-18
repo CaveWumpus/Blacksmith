@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8bf3c38d27c3524b992f63e8bf2cb51, type: 3}
+  m_Name: NeutralBiome
+  m_EditorClassIdentifier: Assembly-CSharp::BiomeDefinition
+  biomeName: Neutral Biome
+  allowedRocks:
+  - {fileID: 11400000, guid: cfa0564e2737c0749bd74451460f3a65, type: 2}
+  - {fileID: 11400000, guid: 84e4d2cc374747c40840b1d7c76bc516, type: 2}
+  - {fileID: 11400000, guid: 2c7257b78f5e2464ba044cb0dad0d6e5, type: 2}
+  oreMultiplier: 1
+  gemMultiplier: 1
+  relicMultiplier: 1
+  recipeMultiplier: 1
+  patternMultiplier: 1

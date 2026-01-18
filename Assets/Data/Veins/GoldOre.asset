@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f53fb47db83d4f4d98c74a2202e6cce, type: 3}
+  m_Name: GoldOre
+  m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
+  tileName: Gold Ore
+  tileType: 2
+  tileAsset: {fileID: 11400000, guid: a02c160920e533c44918fc943d3ed536, type: 2}
+  levelStart: 0
+  levelEnd: 999
+  rarity: 2
+  item: {fileID: 11400000, guid: 98863eb13299f5b4bb1e2deda6efcb28, type: 2}
+  icon: {fileID: 0}
+  minDurability: 1
+  maxDurability: 3
+  minYield: 1
+  maxYield: 1
