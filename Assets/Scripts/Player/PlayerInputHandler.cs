@@ -16,16 +16,32 @@ public class PlayerInputHandler : MonoBehaviour
     private InputAction jumpAction;
     private InputAction mineAction;
     private InputAction pauseAction;
+    public bool lanternIncreasePressed;
+    public bool lanternDecreasePressed;
+    public bool lanternBoostPressed;
+    public static PlayerInputHandler Instance { get; private set; }
+    private PlayerControls controls;
+
+
+
 
     void Awake()
     {
+        Instance = this;
         playerInput = GetComponent<PlayerInput>();
+        controls = new PlayerControls();
+        controls.Enable();
 
         // Assumes you have an "Gameplay" or "Player" action map with these actions
         moveAction  = playerInput.actions["Move"];
         jumpAction  = playerInput.actions["Jump"];
         mineAction  = playerInput.actions["Mine"];
         pauseAction = playerInput.actions["Pause"];
+
+        controls.Player.LanternIncrease.performed += _ => lanternIncreasePressed = true;
+        controls.Player.LanternDecrease.performed += _ => lanternDecreasePressed = true;
+        controls.Player.LanternBoost.performed += _ => lanternBoostPressed = true;
+
     }
 
     void OnEnable()
@@ -80,6 +96,11 @@ public class PlayerInputHandler : MonoBehaviour
         jumpPressed = false;
         minePressed = false;
         pausePressed = false;
+        
+        lanternIncreasePressed = false;
+        lanternDecreasePressed = false;
+        lanternBoostPressed = false;
+
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext ctx)

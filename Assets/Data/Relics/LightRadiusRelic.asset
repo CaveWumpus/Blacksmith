@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelicDefinition
   tileName: Light Radius Relic
   tileType: 4
-  tileAsset: {fileID: 11400000, guid: bc480f89d2be9cf4489069d315e0e407, type: 2}
+  tileAsset: {fileID: 11400000, guid: 7d69edbcd70cba740a723d269bccaa1f, type: 2}
   levelStart: 0
   levelEnd: 999
   item: {fileID: 11400000, guid: 375b123a3ab16024bbd95f22c92be765, type: 2}

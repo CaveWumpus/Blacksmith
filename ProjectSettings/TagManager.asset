@@ -18,8 +18,8 @@ TagManager:
   - Wall
   - groundAndWallLayer
   - Player
-  - 
-  - 
+  - PopupUI
+  - Background
   - 
   - 
   - 

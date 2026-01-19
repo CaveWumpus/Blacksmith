@@ -40,6 +40,12 @@ public class BaseInventoryData : ScriptableObject
             }
         }
     }
+    public void ClearAllSlots()
+    {
+        for (int i = 0; i < slots.Length; i++)
+            slots[i].Clear();
+    }
+
 
     public InventorySlot GetSlot(int index)
     {

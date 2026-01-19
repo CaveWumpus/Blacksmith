@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: QuartzGemItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   isRelic: 0
-  itemName: QuartzGemItem
+  itemName: Quartz Gem
   itemType: 0
   maxStack: 10
   icon: {fileID: 21300096, guid: bb76618f4bae74c83b9d6654d0b2a47e, type: 3}

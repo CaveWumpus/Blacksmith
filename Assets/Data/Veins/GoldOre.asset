@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
   tileName: Gold Ore
   tileType: 2
-  tileAsset: {fileID: 11400000, guid: a02c160920e533c44918fc943d3ed536, type: 2}
+  tileAsset: {fileID: 0}
   levelStart: 0
   levelEnd: 999
   rarity: 2

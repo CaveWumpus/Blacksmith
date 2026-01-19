@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CopperOreItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   isRelic: 0
-  itemName: CopperOreItem
+  itemName: Copper Ore
   itemType: 0
   maxStack: 20
   icon: {fileID: 21300068, guid: bb76618f4bae74c83b9d6654d0b2a47e, type: 3}

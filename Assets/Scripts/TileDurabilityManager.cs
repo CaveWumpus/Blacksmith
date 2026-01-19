@@ -2,27 +2,71 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class TileDurabilityManager : MonoBehaviour
 {
     public static TileDurabilityManager Instance;
 
+    [Header("Definitions (Manual Mode)")]
+    public bool useAutoLoad = true;
+
     [Header("Tile Definitions")]
-    public List<TileDefinition> allDefinitions;
+    public List<TileDefinition> allDefinitions = new List<TileDefinition>();
 
     private Dictionary<TileBase, TileDefinition> tileLookup = new Dictionary<TileBase, TileDefinition>();
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
     private Dictionary<Vector3Int, DropResult> dropMap = new Dictionary<Vector3Int, DropResult>();
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
 
-        // Build lookup table
+#if UNITY_EDITOR
+        if (useAutoLoad)
+            AutoLoadDefinitions();
+#endif
+
+        BuildLookupTable();
+    }
+
+#if UNITY_EDITOR
+    private void AutoLoadDefinitions()
+    {
+        allDefinitions = LoadAllAssetsOfType<TileDefinition>();
+        Debug.Log($"[TileDurabilityManager] Auto‑loaded {allDefinitions.Count} TileDefinitions.");
+    }
+
+    private List<T> LoadAllAssetsOfType<T>() where T : ScriptableObject
+    {
+        var assets = new List<T>();
+        string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
+
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (asset != null)
+                assets.Add(asset);
+        }
+
+        return assets;
+    }
+#endif
+
+    private void BuildLookupTable()
+    {
+        tileLookup.Clear();
+
         foreach (var def in allDefinitions)
         {
-            if (def.tileAsset != null)
+            if (def != null && def.tileAsset != null)
                 tileLookup[def.tileAsset] = def;
         }
+
+        Debug.Log($"[TileDurabilityManager] Built lookup for {tileLookup.Count} tile assets.");
     }
 
     // ---------------------------------------------------------
@@ -30,18 +74,14 @@ public class TileDurabilityManager : MonoBehaviour
     // ---------------------------------------------------------
     public void AssignTile(Vector3Int cellPos, TileDefinition def, DropResult drop)
     {
-        // Assign durability
         int durability = 1;
 
         if (def is RockDefinition rock)
             durability = Random.Range(rock.minDurability, rock.maxDurability + 1);
-
         else if (def is VeinDefinition vein)
             durability = Random.Range(vein.minDurability, vein.maxDurability + 1);
 
         durabilityMap[cellPos] = durability;
-
-        // Assign drop result
         dropMap[cellPos] = drop;
     }
 
@@ -61,7 +101,6 @@ public class TileDurabilityManager : MonoBehaviour
         if (!tileLookup.TryGetValue(tile, out TileDefinition def))
             return;
 
-        // Handle tile type
         switch (def.tileType)
         {
             case TileType.Rock:
@@ -70,8 +109,18 @@ public class TileDurabilityManager : MonoBehaviour
 
             case TileType.Ore:
             case TileType.Gem:
-                HandleVeinDamage(cellPos, tilemap, def as VeinDefinition);
+            {
+                // Always pull the REAL vein definition from dropMap
+                if (!dropMap.TryGetValue(cellPos, out DropResult drop) || drop.vein == null)
+                {
+                    Debug.LogError("DropResult.vein is NULL at " + cellPos);
+                    return;
+                }
+
+                HandleVeinDamage(cellPos, tilemap, drop.vein);
                 break;
+            }
+
 
             case TileType.Relic:
                 HandleRelicTile(cellPos, tilemap, def as RelicDefinition);
@@ -97,24 +146,42 @@ public class TileDurabilityManager : MonoBehaviour
 
         DropResult drop = dropMap[cellPos];
 
-        // If nothing was rolled → clear tile
         if (drop.dropType == TileType.Ground)
         {
             ClearTile(cellPos, tilemap);
             return;
         }
 
-        // If ore/gem → spawn vein tile
+        // ORE / GEM → use generic vein tiles
         if (drop.dropType == TileType.Ore || drop.dropType == TileType.Gem)
         {
             VeinDefinition vein = drop.vein;
-            tilemap.SetTile(cellPos, vein.tileAsset);
 
+            GenericVeinDefinition genericDef = null;
+            if (GenericVeinLibrary.Instance != null)
+            {
+                genericDef = GenericVeinLibrary.Instance.GetGenericDefinition(
+                    drop.dropType,   // Ore or Gem
+                    vein.rarity
+                );
+            }
+
+            TileBase tileToSet = null;
+
+            if (genericDef != null)
+                tileToSet = genericDef.tileAsset;
+            else if (vein != null)
+                tileToSet = vein.tileAsset; // fallback to specific tile if needed
+
+            tilemap.SetTile(cellPos, tileToSet);
+
+            // Durability still comes from the specific vein definition
             durabilityMap[cellPos] = Random.Range(vein.minDurability, vein.maxDurability + 1);
             return;
         }
 
-        // If relic/recipe/pattern → spawn special tile
+
+        // RELIC / RECIPE / PATTERN → use their specific tiles
         if (drop.dropType == TileType.Relic)
         {
             tilemap.SetTile(cellPos, drop.relic.tileAsset);
@@ -142,11 +209,28 @@ public class TileDurabilityManager : MonoBehaviour
     // ---------------------------------------------------------
     private void HandleVeinDamage(Vector3Int cellPos, Tilemap tilemap, VeinDefinition vein)
     {
-        if (vein == null) Debug.LogError("VEIN IS NULL at " + cellPos); if (vein != null && vein.item == null) Debug.LogError("VEIN.ITEM IS NULL for vein: " + vein.tileName); if (UnifiedInventoryController.Instance == null) Debug.LogError("INVENTORY CONTROLLER INSTANCE IS NULL");
-        
-        // Give item every hit
+        if (vein == null)
+        {
+            Debug.LogError("VEIN IS NULL at " + cellPos);
+            return;
+        }
+
+        if (vein.item == null)
+            Debug.LogError("VEIN.ITEM IS NULL for vein: " + vein.tileName);
+
+        if (UnifiedInventoryController.Instance == null)
+            Debug.LogError("INVENTORY CONTROLLER INSTANCE IS NULL");
+
         int yield = Random.Range(vein.minYield, vein.maxYield + 1);
         UnifiedInventoryController.Instance.TryAddItem(vein.item, yield);
+
+        // Spawn loot popup
+        if (LootPopupSpawner.Instance != null)
+        {
+            Vector3 popupPos = tilemap.GetCellCenterWorld(cellPos);
+            LootPopupSpawner.Instance.Spawn(vein.item.itemName, yield, popupPos, vein.rarity);
+        }
+
 
         if (durabilityMap[cellPos] > 0)
             return;
@@ -161,10 +245,14 @@ public class TileDurabilityManager : MonoBehaviour
     {
         bool added = UnifiedInventoryController.Instance.TryAddRelic(relic.item);
 
-        if (!added)
+        if (LootPopupSpawner.Instance != null)
         {
-            Debug.Log($"No space for relic {relic.tileName} – TODO: spawn pickup here.");
+            Vector3 popupPos = tilemap.GetCellCenterWorld(cellPos);
+            LootPopupSpawner.Instance.Spawn(relic.item.itemName, 1, popupPos, RarityTier.Regular);
         }
+
+        if (!added)
+            Debug.Log($"No space for relic {relic.tileName} – TODO: spawn pickup here.");
 
         ClearTile(cellPos, tilemap);
     }
@@ -176,8 +264,16 @@ public class TileDurabilityManager : MonoBehaviour
     private void HandleRecipeTile(Vector3Int cellPos, Tilemap tilemap, RecipeDefinition recipe) 
     { 
         RecipeManager.Instance.UnlockRecipe(recipe); 
+
+        if (LootPopupSpawner.Instance != null)
+        {
+            Vector3 popupPos = tilemap.GetCellCenterWorld(cellPos);
+            LootPopupSpawner.Instance.Spawn(recipe.name, 1, popupPos, RarityTier.Regular);
+        }
+
         ClearTile(cellPos, tilemap); 
     }
+
 
     // ---------------------------------------------------------
     // PATTERN TILE → unlock permanently
@@ -185,8 +281,16 @@ public class TileDurabilityManager : MonoBehaviour
     private void HandlePatternTile(Vector3Int cellPos, Tilemap tilemap, PatternDefinition pattern) 
     { 
         PatternManager.Instance.UnlockPattern(pattern); 
+
+        if (LootPopupSpawner.Instance != null)
+        {
+            Vector3 popupPos = tilemap.GetCellCenterWorld(cellPos);
+            LootPopupSpawner.Instance.Spawn(pattern.name, 1, popupPos, RarityTier.Regular);
+        }
+
         ClearTile(cellPos, tilemap); 
     }
+
 
     // ---------------------------------------------------------
     // Clear tile + cleanup

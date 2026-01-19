@@ -4,6 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class MineGenerator : MonoBehaviour
 {
     [Header("Grid Settings")]
@@ -14,13 +18,15 @@ public class MineGenerator : MonoBehaviour
     [Header("Tiles")]
     public TileBase perimeterTile;
 
-    [Header("Definitions")]
-    public List<RockDefinition> rockDefinitions;
-    public List<VeinDefinition> oreDefinitions;
-    public List<VeinDefinition> gemDefinitions;
-    public List<RelicDefinition> relicDefinitions;
-    public List<RecipeDefinition> recipeDefinitions;
-    public List<PatternDefinition> patternDefinitions;
+    [Header("Definitions (Manual Mode)")]
+    public bool useAutoLoad = true;
+
+    public List<RockDefinition> rockDefinitions = new List<RockDefinition>();
+    public List<VeinDefinition> oreDefinitions = new List<VeinDefinition>();
+    public List<VeinDefinition> gemDefinitions = new List<VeinDefinition>();
+    public List<RelicDefinition> relicDefinitions = new List<RelicDefinition>();
+    public List<RecipeDefinition> recipeDefinitions = new List<RecipeDefinition>();
+    public List<PatternDefinition> patternDefinitions = new List<PatternDefinition>();
 
     [Header("Biome")]
     public BiomeDefinition biome;
@@ -37,10 +43,58 @@ public class MineGenerator : MonoBehaviour
     private int startX, startY;
     private bool startOnLeft;
 
-    void Start()
+    private void Start()
     {
+#if UNITY_EDITOR
+        if (useAutoLoad)
+            AutoLoadDefinitions();
+#endif
         GenerateMine();
     }
+
+#if UNITY_EDITOR
+    // ---------------------------------------------------------
+    // AUTO‑LOAD ALL SCRIPTABLEOBJECT DEFINITIONS (Option C)
+    // ---------------------------------------------------------
+    private void AutoLoadDefinitions()
+    {
+        rockDefinitions = LoadAll<RockDefinition>();
+
+        var allVeins = LoadAll<VeinDefinition>();
+        oreDefinitions = allVeins.Where(v => v.tileType == TileType.Ore).ToList();
+        gemDefinitions = allVeins.Where(v => v.tileType == TileType.Gem).ToList();
+
+        relicDefinitions = LoadAll<RelicDefinition>();
+        recipeDefinitions = LoadAll<RecipeDefinition>();
+        patternDefinitions = LoadAll<PatternDefinition>();
+
+        // Auto‑assign a biome if none set
+        if (biome == null)
+        {
+            var biomes = LoadAll<BiomeDefinition>();
+            if (biomes.Count > 0)
+                biome = biomes[0];
+        }
+
+        Debug.Log("[MineGenerator] Auto‑loaded all definitions via AssetDatabase.");
+    }
+
+    private List<T> LoadAll<T>() where T : ScriptableObject
+    {
+        var list = new List<T>();
+        string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
+
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (asset != null)
+                list.Add(asset);
+        }
+
+        return list;
+    }
+#endif
 
     // ---------------------------------------------------------
     // MAIN GENERATION
@@ -49,12 +103,10 @@ public class MineGenerator : MonoBehaviour
     {
         grid = new bool[width, height];
 
-        // Fill with solid
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 grid[x, y] = true;
 
-        // Perimeter walls
         for (int x = 0; x < width; x++)
         {
             grid[x, 0] = true;
@@ -66,7 +118,6 @@ public class MineGenerator : MonoBehaviour
             grid[width - 1, y] = true;
         }
 
-        // Entrance room
         startOnLeft = Random.value < 0.5f;
         startX = startOnLeft ? 1 : width - 5;
         startY = Random.Range(height / 3, (height * 2) / 3);
@@ -75,7 +126,6 @@ public class MineGenerator : MonoBehaviour
             for (int y = startY; y < startY + 4; y++)
                 grid[x, y] = false;
 
-        // Open perimeter at entrance
         if (startOnLeft)
             for (int y = startY; y < startY + 4; y++)
                 grid[0, y] = false;
@@ -83,7 +133,6 @@ public class MineGenerator : MonoBehaviour
             for (int y = startY; y < startY + 4; y++)
                 grid[width - 1, y] = false;
 
-        // Tunnel
         int tunnelLength = 6;
         if (startOnLeft)
         {
@@ -147,7 +196,6 @@ public class MineGenerator : MonoBehaviour
             biome = biome
         };
 
-        // Filter pools by level
         var validRocks = rockDefinitions
             .Where(r => playerLevel >= r.levelStart && playerLevel <= r.levelEnd)
             .Where(r => biome.allowedRocks.Contains(r))
@@ -173,7 +221,6 @@ public class MineGenerator : MonoBehaviour
             .Where(p => playerLevel >= p.levelStart && playerLevel <= p.levelEnd)
             .ToList();
 
-        // Loop through grid
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -186,14 +233,12 @@ public class MineGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Perimeter = unmineable
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                 {
                     tilemap.SetTile(cellPos, perimeterTile);
                     continue;
                 }
 
-                // Pick a weighted rock
                 RockDefinition rock = GetWeightedRock(validRocks, biome);
 
                 tilemap.SetTile(cellPos, rock.tileAsset);

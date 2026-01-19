@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
   tileName: Quartz Gem
   tileType: 3
-  tileAsset: {fileID: 11400000, guid: 52e77972e5d2e1b4ab42061bda91f49a, type: 2}
+  tileAsset: {fileID: 0}
   levelStart: 0
   levelEnd: 999
   rarity: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RubyGemItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   isRelic: 0
-  itemName: RubyGemItem
+  itemName: Ruby Gem
   itemType: 0
   maxStack: 10
   icon: {fileID: 21300098, guid: bb76618f4bae74c83b9d6654d0b2a47e, type: 3}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PatternDefinition
   tileName: Gem Ring Pattern
   tileType: 6
-  tileAsset: {fileID: 11400000, guid: ade86164128004d41af2c969a354c1ce, type: 2}
+  tileAsset: {fileID: 11400000, guid: 7dc378803ec4c5a4a905aa6b18ce5fec, type: 2}
   levelStart: 0
   levelEnd: 999
   dropWeight: 1

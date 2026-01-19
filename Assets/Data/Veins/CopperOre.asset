@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
   tileName: Copper Ore
   tileType: 2
-  tileAsset: {fileID: 11400000, guid: 64c091c16d878c24bb8082bd0ac0d075, type: 2}
+  tileAsset: {fileID: 0}
   levelStart: 1
   levelEnd: 999
   rarity: 1

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
   tileName: Iron Ore
   tileType: 2
-  tileAsset: {fileID: 11400000, guid: b9a875a4b87044f4b82a7d9d2a922a39, type: 2}
+  tileAsset: {fileID: 0}
   levelStart: 0
   levelEnd: 999
   rarity: 0

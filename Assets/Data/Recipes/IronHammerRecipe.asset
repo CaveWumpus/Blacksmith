@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RecipeDefinition
   tileName: IronHammer Recipe
   tileType: 5
-  tileAsset: {fileID: 11400000, guid: d32d0156897828245b28cec3f86f0f31, type: 2}
+  tileAsset: {fileID: 11400000, guid: d94de85525de11d44a6aa5707688d52c, type: 2}
   levelStart: 0
   levelEnd: 999
   dropWeight: 1

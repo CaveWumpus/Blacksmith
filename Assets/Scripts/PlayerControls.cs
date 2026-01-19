@@ -136,6 +136,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LanternIncrease"",
+                    ""type"": ""Button"",
+                    ""id"": ""8f0a443d-86f5-476a-a84b-05c7a11545c2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LanternDecrease"",
+                    ""type"": ""Button"",
+                    ""id"": ""3fdac812-9142-4025-9ed6-d4b6f67dc7d6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LanternBoost"",
+                    ""type"": ""Button"",
+                    ""id"": ""a52dfde3-dab6-4bd4-a94d-1656b4fde571"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -219,7 +246,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d63dbde0-f48a-48e6-bb9e-dff3ecdd00b1"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -235,6 +262,72 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7fe85828-8fd4-46a7-a5b3-49fac712b706"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternIncrease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""89f51054-8451-46cd-a366-12c1b1deff0a"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternIncrease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""24e66781-a802-49b0-93e6-af96e459767e"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternDecrease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6be5a8cd-1864-4153-9c25-6cc113babb15"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternDecrease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3850fca7-dc95-4e91-bd2d-403f852604ac"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternBoost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e22c0c3-766c-43c6-945b-7c96504a70a7"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LanternBoost"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -527,6 +620,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_LanternIncrease = m_Player.FindAction("LanternIncrease", throwIfNotFound: true);
+        m_Player_LanternDecrease = m_Player.FindAction("LanternDecrease", throwIfNotFound: true);
+        m_Player_LanternBoost = m_Player.FindAction("LanternBoost", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
@@ -625,6 +721,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_LanternIncrease;
+    private readonly InputAction m_Player_LanternDecrease;
+    private readonly InputAction m_Player_LanternBoost;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -656,6 +755,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Interact".
         /// </summary>
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LanternIncrease".
+        /// </summary>
+        public InputAction @LanternIncrease => m_Wrapper.m_Player_LanternIncrease;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LanternDecrease".
+        /// </summary>
+        public InputAction @LanternDecrease => m_Wrapper.m_Player_LanternDecrease;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LanternBoost".
+        /// </summary>
+        public InputAction @LanternBoost => m_Wrapper.m_Player_LanternBoost;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -697,6 +808,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @LanternIncrease.started += instance.OnLanternIncrease;
+            @LanternIncrease.performed += instance.OnLanternIncrease;
+            @LanternIncrease.canceled += instance.OnLanternIncrease;
+            @LanternDecrease.started += instance.OnLanternDecrease;
+            @LanternDecrease.performed += instance.OnLanternDecrease;
+            @LanternDecrease.canceled += instance.OnLanternDecrease;
+            @LanternBoost.started += instance.OnLanternBoost;
+            @LanternBoost.performed += instance.OnLanternBoost;
+            @LanternBoost.canceled += instance.OnLanternBoost;
         }
 
         /// <summary>
@@ -723,6 +843,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @LanternIncrease.started -= instance.OnLanternIncrease;
+            @LanternIncrease.performed -= instance.OnLanternIncrease;
+            @LanternIncrease.canceled -= instance.OnLanternIncrease;
+            @LanternDecrease.started -= instance.OnLanternDecrease;
+            @LanternDecrease.performed -= instance.OnLanternDecrease;
+            @LanternDecrease.canceled -= instance.OnLanternDecrease;
+            @LanternBoost.started -= instance.OnLanternBoost;
+            @LanternBoost.performed -= instance.OnLanternBoost;
+            @LanternBoost.canceled -= instance.OnLanternBoost;
         }
 
         /// <summary>
@@ -1045,6 +1174,27 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LanternIncrease" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLanternIncrease(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LanternDecrease" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLanternDecrease(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LanternBoost" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLanternBoost(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

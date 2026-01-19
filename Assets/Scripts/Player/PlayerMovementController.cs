@@ -12,6 +12,14 @@ public class PlayerMovementController : MonoBehaviour
     public float acceleration = 12f;
     public float deceleration = 14f;
 
+    [Header("Advanced Movement Tuning")]
+    public float maxAcceleration = 80f;     // how fast you reach full speed
+    public float maxDeceleration = 90f;     // how fast you stop
+    public float apexBonus = 1.2f;          // extra control at top of jump
+    public float gravityScale = 4f;         // stronger gravity
+    public float fallGravityScale = 6f;     // even stronger when falling
+
+
     [Header("Jump Settings")]
     public float jumpForce = 12f;
     public float coyoteTime = 0.1f;
@@ -42,10 +50,20 @@ public class PlayerMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
+        ApplyCustomGravity();
         HandleMovement();
         HandleJump();
         HandleFacingDirection();
     }
+
+    void ApplyCustomGravity()
+    {
+        if (rb.linearVelocity.y < 0)
+            rb.gravityScale = fallGravityScale;   // fast fall
+        else
+            rb.gravityScale = gravityScale;       // normal jump
+    }
+
 
     // -----------------------------
     // Ground Check
@@ -80,16 +98,30 @@ public class PlayerMovementController : MonoBehaviour
     // -----------------------------
     void HandleMovement()
     {
-        targetSpeed = input.moveInput.x * moveSpeed;
+        float inputX = input.moveInput.x;
 
-        // Smooth acceleration/deceleration
-        if (Mathf.Abs(targetSpeed) > 0.1f)
-            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
-        else
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, deceleration * Time.fixedDeltaTime);
+        // Target horizontal speed
+        float targetSpeed = inputX * moveSpeed;
 
-        rb.linearVelocity = new Vector2(currentSpeed, rb.linearVelocity.y);
+        // Determine acceleration or deceleration
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f)
+            ? maxAcceleration
+            : maxDeceleration;
+
+        // Apex bonus (more control at top of jump)
+        if (Mathf.Abs(rb.linearVelocity.y) < 0.1f)
+            accelRate *= apexBonus;
+
+        // Move toward target speed
+        float newSpeed = Mathf.MoveTowards(
+            rb.linearVelocity.x,
+            targetSpeed,
+            accelRate * Time.fixedDeltaTime
+        );
+
+        rb.linearVelocity = new Vector2(newSpeed, rb.linearVelocity.y);
     }
+
 
     // -----------------------------
     // Jump Logic
@@ -103,12 +135,13 @@ public class PlayerMovementController : MonoBehaviour
             coyoteCounter = 0;
         }
 
-        // Optional: variable jump height
+        // Variable jump height
         if (!input.jumpHeld && rb.linearVelocity.y > 0)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.6f);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.55f);
         }
     }
+
 
     // -----------------------------
     // Facing Direction

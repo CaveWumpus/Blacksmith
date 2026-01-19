@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelicDefinition
   tileName: Mining Speed Relic
   tileType: 4
-  tileAsset: {fileID: 11400000, guid: 5cc7255c7b240574b83f60b3791b7067, type: 2}
+  tileAsset: {fileID: 11400000, guid: e9ebef61f4aeccb4c9615d153c0ff343, type: 2}
   levelStart: 0
   levelEnd: 999
   item: {fileID: 11400000, guid: db32f82a0fb1a79458c9582cde483dac, type: 2}

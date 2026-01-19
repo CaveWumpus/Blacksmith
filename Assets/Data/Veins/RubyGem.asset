@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
   tileName: Ruby Gem
   tileType: 3
-  tileAsset: {fileID: 11400000, guid: b816a29d6f6cbd947bb66fc5cd7b9ead, type: 2}
+  tileAsset: {fileID: 0}
   levelStart: 0
   levelEnd: 999
   rarity: 1
