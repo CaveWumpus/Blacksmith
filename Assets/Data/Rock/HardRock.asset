@@ -17,6 +17,10 @@ MonoBehaviour:
   tileAsset: {fileID: 11400000, guid: 12beccda482590e4db975a7c40dedc2a, type: 2}
   levelStart: 1
   levelEnd: 999
+  weakPointDirection: 3
+  weakPointMultiplier: 1
+  weakPointVFX: {fileID: 0}
+  weakPointIndicatorPrefab: {fileID: 7199484598000864259, guid: db988a2aebe01254d8edf1f1466c301d, type: 3}
   minDurability: 4
   maxDurability: 4
   spawnWeight: 2

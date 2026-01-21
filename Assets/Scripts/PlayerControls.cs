@@ -107,7 +107,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""a2c5f5c2-93f7-45e1-9879-b76456b8341f"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold,Press(behavior=1)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -159,6 +159,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""LanternBoost"",
                     ""type"": ""Button"",
                     ""id"": ""a52dfde3-dab6-4bd4-a94d-1656b4fde571"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grapple"",
+                    ""type"": ""Button"",
+                    ""id"": ""174157f9-52dc-433b-b53d-4b1f1a755bed"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToolNext"",
+                    ""type"": ""Button"",
+                    ""id"": ""50c9c695-782a-42dd-bcf3-2e453ad2d586"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToolPrev"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e2beafa-20b8-4f27-b65f-22071cfcb32c"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -328,6 +355,50 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""LanternBoost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6c8b5563-af4f-4a4d-a3da-0d00135000f2"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6486db62-d86b-466b-a8d6-cdfe9099cecc"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""70b8ac4f-630c-4594-bf84-a6c524c3b58f"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToolNext"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f83f87bd-3028-4c05-b7bb-ad303d7981a1"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToolPrev"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -623,6 +694,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_LanternIncrease = m_Player.FindAction("LanternIncrease", throwIfNotFound: true);
         m_Player_LanternDecrease = m_Player.FindAction("LanternDecrease", throwIfNotFound: true);
         m_Player_LanternBoost = m_Player.FindAction("LanternBoost", throwIfNotFound: true);
+        m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
+        m_Player_ToolNext = m_Player.FindAction("ToolNext", throwIfNotFound: true);
+        m_Player_ToolPrev = m_Player.FindAction("ToolPrev", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
@@ -724,6 +798,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_LanternIncrease;
     private readonly InputAction m_Player_LanternDecrease;
     private readonly InputAction m_Player_LanternBoost;
+    private readonly InputAction m_Player_Grapple;
+    private readonly InputAction m_Player_ToolNext;
+    private readonly InputAction m_Player_ToolPrev;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -767,6 +844,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/LanternBoost".
         /// </summary>
         public InputAction @LanternBoost => m_Wrapper.m_Player_LanternBoost;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Grapple".
+        /// </summary>
+        public InputAction @Grapple => m_Wrapper.m_Player_Grapple;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ToolNext".
+        /// </summary>
+        public InputAction @ToolNext => m_Wrapper.m_Player_ToolNext;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ToolPrev".
+        /// </summary>
+        public InputAction @ToolPrev => m_Wrapper.m_Player_ToolPrev;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -817,6 +906,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @LanternBoost.started += instance.OnLanternBoost;
             @LanternBoost.performed += instance.OnLanternBoost;
             @LanternBoost.canceled += instance.OnLanternBoost;
+            @Grapple.started += instance.OnGrapple;
+            @Grapple.performed += instance.OnGrapple;
+            @Grapple.canceled += instance.OnGrapple;
+            @ToolNext.started += instance.OnToolNext;
+            @ToolNext.performed += instance.OnToolNext;
+            @ToolNext.canceled += instance.OnToolNext;
+            @ToolPrev.started += instance.OnToolPrev;
+            @ToolPrev.performed += instance.OnToolPrev;
+            @ToolPrev.canceled += instance.OnToolPrev;
         }
 
         /// <summary>
@@ -852,6 +950,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @LanternBoost.started -= instance.OnLanternBoost;
             @LanternBoost.performed -= instance.OnLanternBoost;
             @LanternBoost.canceled -= instance.OnLanternBoost;
+            @Grapple.started -= instance.OnGrapple;
+            @Grapple.performed -= instance.OnGrapple;
+            @Grapple.canceled -= instance.OnGrapple;
+            @ToolNext.started -= instance.OnToolNext;
+            @ToolNext.performed -= instance.OnToolNext;
+            @ToolNext.canceled -= instance.OnToolNext;
+            @ToolPrev.started -= instance.OnToolPrev;
+            @ToolPrev.performed -= instance.OnToolPrev;
+            @ToolPrev.canceled -= instance.OnToolPrev;
         }
 
         /// <summary>
@@ -1195,6 +1302,27 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLanternBoost(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Grapple" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnGrapple(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToolNext" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToolNext(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToolPrev" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToolPrev(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

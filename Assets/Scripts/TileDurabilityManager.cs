@@ -19,6 +19,10 @@ public class TileDurabilityManager : MonoBehaviour
     private Dictionary<TileBase, TileDefinition> tileLookup = new Dictionary<TileBase, TileDefinition>();
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
     private Dictionary<Vector3Int, DropResult> dropMap = new Dictionary<Vector3Int, DropResult>();
+    // Weak‑point indicators tied to tile positions
+    private Dictionary<Vector3Int, GameObject> weakPointIndicators 
+        = new Dictionary<Vector3Int, GameObject>();
+
 
     private void Awake()
     {
@@ -85,15 +89,21 @@ public class TileDurabilityManager : MonoBehaviour
         dropMap[cellPos] = drop;
     }
 
+    public void RegisterIndicator(Vector3Int cellPos, GameObject indicator)
+    {
+        weakPointIndicators[cellPos] = indicator;
+    }
+
+
     // ---------------------------------------------------------
     // Damage tile
     // ---------------------------------------------------------
-    public void Damage(Vector3Int cellPos, Tilemap tilemap)
+    public void Damage(Vector3Int cellPos, Tilemap tilemap, int bonusDamage = 0)
     {
         if (!durabilityMap.ContainsKey(cellPos))
             return;
 
-        durabilityMap[cellPos]--;
+        durabilityMap[cellPos] -= (1 + bonusDamage);
 
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null) return;
@@ -300,5 +310,13 @@ public class TileDurabilityManager : MonoBehaviour
         tilemap.SetTile(cellPos, null);
         durabilityMap.Remove(cellPos);
         dropMap.Remove(cellPos);
+
+        // Remove weak‑point indicator if present
+        if (weakPointIndicators.TryGetValue(cellPos, out GameObject indicator))
+        {
+            Destroy(indicator);
+            weakPointIndicators.Remove(cellPos);
+        }
     }
+
 }

@@ -21,7 +21,7 @@
                     "id": "a2c5f5c2-93f7-45e1-9879-b76456b8341f",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold,Press(behavior=1)",
                     "initialStateCheck": false
                 },
                 {
@@ -73,6 +73,33 @@
                     "name": "LanternBoost",
                     "type": "Button",
                     "id": "a52dfde3-dab6-4bd4-a94d-1656b4fde571",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Grapple",
+                    "type": "Button",
+                    "id": "174157f9-52dc-433b-b53d-4b1f1a755bed",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToolNext",
+                    "type": "Button",
+                    "id": "50c9c695-782a-42dd-bcf3-2e453ad2d586",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToolPrev",
+                    "type": "Button",
+                    "id": "8e2beafa-20b8-4f27-b65f-22071cfcb32c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -242,6 +269,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "LanternBoost",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6c8b5563-af4f-4a4d-a3da-0d00135000f2",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6486db62-d86b-466b-a8d6-cdfe9099cecc",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "70b8ac4f-630c-4594-bf84-a6c524c3b58f",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToolNext",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f83f87bd-3028-4c05-b7bb-ad303d7981a1",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToolPrev",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

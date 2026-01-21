@@ -57,6 +57,9 @@ GameObject:
   - component: {fileID: 8254455342577367218}
   - component: {fileID: 7826344081716390126}
   - component: {fileID: 2271530662634246640}
+  - component: {fileID: 2667171869982205909}
+  - component: {fileID: 7778917533578698512}
+  - component: {fileID: 9127190839443374394}
   m_Layer: 7
   m_Name: MineTilemap
   m_TagString: Untagged
@@ -211,3 +214,44 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!114 &2667171869982205909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504148707962797105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64dfed0f83bdbc447a9216e9d3611edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TileData
+  tileDefinition: {fileID: 11400000, guid: 2c7257b78f5e2464ba044cb0dad0d6e5, type: 2}
+--- !u!114 &7778917533578698512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504148707962797105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2a3959a56da524babbc7a661e5a544, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TileFlashEffect
+  tilemap: {fileID: 8254455342577367218}
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1
+--- !u!114 &9127190839443374394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504148707962797105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74e97b1975a9c3f4a86f48c892aac1f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointIndicatorSpawner
+  definition: {fileID: 11400000, guid: 84e4d2cc374747c40840b1d7c76bc516, type: 2}

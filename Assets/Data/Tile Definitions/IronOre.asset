@@ -9,22 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f53fb47db83d4f4d98c74a2202e6cce, type: 3}
+  m_Script: {fileID: 11500000, guid: 26eeaf03aaf663440a8a5420756b7d14, type: 3}
   m_Name: IronOre
-  m_EditorClassIdentifier: Assembly-CSharp::VeinDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::TileDefinition
   tileName: Iron Ore
   tileType: 2
   tileAsset: {fileID: 0}
   levelStart: 0
-  levelEnd: 999
+  levelEnd: 0
   weakPointDirection: 1
   weakPointMultiplier: 1
   weakPointVFX: {fileID: 0}
-  weakPointIndicatorPrefab: {fileID: 0}
-  rarity: 0
-  item: {fileID: 11400000, guid: 1e81bc8964c4ce04f986c2f23e0f46fa, type: 2}
-  icon: {fileID: 0}
-  minDurability: 1
-  maxDurability: 3
-  minYield: 1
-  maxYield: 1

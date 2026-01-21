@@ -21,6 +21,17 @@ public class PlayerInputHandler : MonoBehaviour
     public bool lanternBoostPressed;
     public static PlayerInputHandler Instance { get; private set; }
     private PlayerControls controls;
+    public bool gripHeld;
+    public bool mineStarted { get; private set; }
+    public bool mineHeld { get; private set; }
+    public bool mineReleased { get; private set; }
+    public bool toolNextPressed;
+    public bool toolPrevPressed;
+    private InputAction toolNextAction;
+    private InputAction toolPrevAction;
+
+
+
 
 
 
@@ -37,10 +48,16 @@ public class PlayerInputHandler : MonoBehaviour
         jumpAction  = playerInput.actions["Jump"];
         mineAction  = playerInput.actions["Mine"];
         pauseAction = playerInput.actions["Pause"];
+        toolNextAction = playerInput.actions["ToolNext"];
+        toolPrevAction = playerInput.actions["ToolPrev"];
+
 
         controls.Player.LanternIncrease.performed += _ => lanternIncreasePressed = true;
         controls.Player.LanternDecrease.performed += _ => lanternDecreasePressed = true;
         controls.Player.LanternBoost.performed += _ => lanternBoostPressed = true;
+        controls.Player.Grapple.performed += _ => gripHeld = true;
+        controls.Player.Grapple.canceled += _ => gripHeld = false;
+
 
     }
 
@@ -57,6 +74,12 @@ public class PlayerInputHandler : MonoBehaviour
         mineAction.performed += OnMinePerformed;
 
         pauseAction.performed += OnPausePerformed;
+        toolNextAction.Enable();
+        toolPrevAction.Enable();
+
+        toolNextAction.performed += ctx => toolNextPressed = true;
+        toolPrevAction.performed += ctx => toolPrevPressed = true;
+
     }
 
     void OnDisable()
@@ -72,6 +95,8 @@ public class PlayerInputHandler : MonoBehaviour
         mineAction.performed -= OnMinePerformed;
 
         pauseAction.performed -= OnPausePerformed;
+        toolNextAction.Disable();
+        toolPrevAction.Disable();
     }
 
     void Update()
@@ -84,13 +109,14 @@ public class PlayerInputHandler : MonoBehaviour
         // and should be consumed by other systems, then reset.
     }
 
-    //private void LateUpdate()
-    //{
-        // Reset one-frame flags after other systems have had a chance to read them
-    //    jumpPressed  = false;
-    //    minePressed  = false;
-    //    pausePressed = false;
-    //}
+    void LateUpdate()
+    {
+        mineStarted = false;
+        mineReleased = false;
+        toolNextPressed = false;
+        toolPrevPressed = false;
+    }
+
     private void FixedUpdate()
     {
         jumpPressed = false;
@@ -100,8 +126,27 @@ public class PlayerInputHandler : MonoBehaviour
         lanternIncreasePressed = false;
         lanternDecreasePressed = false;
         lanternBoostPressed = false;
+        
+    }
+    public void OnMine(InputAction.CallbackContext context)
+    {
+        //Debug.Log("OnMine: " + context.phase);
+
+        if (context.started)
+            mineStarted = true;
+
+        if (context.performed)
+            mineHeld = true;
+
+        if (context.canceled)
+        {
+            mineHeld = false;
+            mineReleased = true;
+        }
+        Debug.Log("OnMine: " + context.phase);
 
     }
+
 
     private void OnJumpPerformed(InputAction.CallbackContext ctx)
     {
@@ -122,4 +167,17 @@ public class PlayerInputHandler : MonoBehaviour
     {
         pausePressed = true;
     }
+    public void OnToolNext(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+            toolNextPressed = true;
+    }
+
+
+    public void OnToolPrev(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+            toolPrevPressed = true;
+    }
+
 }

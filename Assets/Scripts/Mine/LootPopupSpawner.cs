@@ -24,7 +24,7 @@ public class LootPopupSpawner : MonoBehaviour
 
     public void Spawn(string itemName, int amount, Vector3 worldPos, RarityTier rarity)
     {
-        Debug.Log($"[LootPopupSpawner] Spawn called for '{itemName}' x{amount}, rarity={rarity}");
+        //Debug.Log($"[LootPopupSpawner] Spawn called for '{itemName}' x{amount}, rarity={rarity}");
 
         if (popupPrefab == null || popupCanvas == null)
             return;

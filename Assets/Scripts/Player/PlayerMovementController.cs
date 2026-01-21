@@ -50,6 +50,11 @@ public class PlayerMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
+        
+        if (GetComponent<PlayerController>().isGripping)
+            return;
+
+
         ApplyCustomGravity();
         HandleMovement();
         HandleJump();
@@ -98,6 +103,9 @@ public class PlayerMovementController : MonoBehaviour
     // -----------------------------
     void HandleMovement()
     {
+        if (GetComponent<PlayerController>().isGripping)
+            return;
+
         float inputX = input.moveInput.x;
 
         // Target horizontal speed

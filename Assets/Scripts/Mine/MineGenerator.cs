@@ -38,6 +38,10 @@ public class MineGenerator : MonoBehaviour
     [Header("Exit Settings")]
     public GameObject exitTriggerPrefab;
 
+    [Header("Debug")]
+    public bool showWeakPointIndicators = false;
+
+
     private bool[,] grid;
     private Vector2 spawnPoint;
     private int startX, startY;
@@ -242,6 +246,39 @@ public class MineGenerator : MonoBehaviour
                 RockDefinition rock = GetWeightedRock(validRocks, biome);
 
                 tilemap.SetTile(cellPos, rock.tileAsset);
+                if (showWeakPointIndicators &&
+                    rock.weakPointDirection != WeakPointDirection.None &&
+                    rock.weakPointIndicatorPrefab != null)
+                {
+                    Vector3 worldPos = tilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
+                    GameObject indicator = Instantiate(
+                        rock.weakPointIndicatorPrefab,
+                        worldPos,
+                        Quaternion.identity,
+                        tilemap.transform
+                    );
+
+                    // Rotate based on weak point direction
+                    switch (rock.weakPointDirection)
+                    {
+                        case WeakPointDirection.Left:
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 180);
+                            break;
+                        case WeakPointDirection.Right:
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 0);
+                            break;
+                        case WeakPointDirection.Up:
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 90);
+                            break;
+                        case WeakPointDirection.Down:
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 270);
+                            break;
+                    }
+
+                    TileDurabilityManager.Instance.RegisterIndicator(cellPos, indicator);
+                }
+
+
 
                 DropResult drop = DropRoller.Roll(
                     rock, ctx,
