@@ -3497,6 +3497,8 @@ MonoBehaviour:
   inventoryData: {fileID: 0}
   slotParent: {fileID: 0}
   slotPrefab: {fileID: 0}
+  backpackSlotCount: 20
+  relicSlotCount: 10
   columns: 5
 --- !u!4 &1040125308
 Transform:
