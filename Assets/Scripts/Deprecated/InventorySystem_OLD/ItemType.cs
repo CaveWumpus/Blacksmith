@@ -1,4 +1,4 @@
-public enum ItemType
+/*public enum ItemType
 {
     Ore,
     Gem,
@@ -7,3 +7,4 @@ public enum ItemType
     Recipe,
     Material
 }
+*/

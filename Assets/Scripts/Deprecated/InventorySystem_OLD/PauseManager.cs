@@ -12,7 +12,7 @@ public class PauseManager : MonoBehaviour
     public InventoryToggleUI inventoryToggleUI;
 
     [Header("Inventory")]
-    public UnifiedInventoryController inventoryController;
+    //public UnifiedInventoryController inventoryController;
 
     [Header("Evacuation")]
     public EvacuationController evacuationController;
@@ -176,7 +176,7 @@ public class PauseManager : MonoBehaviour
         // Inventory mode → exit to PanelSelect
         if (currentMode == PauseMenuMode.Inventory)
         {
-            inventoryController.OnCancel();
+            //inventoryController.OnCancel();
             currentMode = PauseMenuMode.PanelSelect;
             //EventSystem.current.SetSelectedGameObject(null);
             return;

@@ -1,4 +1,4 @@
-using UnityEditor;
+/*using UnityEditor;
 using UnityEngine;
 
 [InitializeOnLoad]
@@ -13,7 +13,7 @@ public static class InventoryAutoClear
     {
         if (state == PlayModeStateChange.ExitingPlayMode)
         {
-            var inv = Object.FindFirstObjectByType<UnifiedInventoryController>();
+            var inv = Object.FindFirstObjectByType<min>();
             if (inv != null && inv.inventoryData != null)
             {
                 inv.inventoryData.ClearAllSlots();
@@ -26,3 +26,4 @@ public static class InventoryAutoClear
         }
     }
 }
+*/

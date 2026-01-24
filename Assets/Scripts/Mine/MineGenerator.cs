@@ -41,7 +41,6 @@ public class MineGenerator : MonoBehaviour
     [Header("Debug")]
     public bool showWeakPointIndicators = false;
 
-
     private bool[,] grid;
     private Vector2 spawnPoint;
     private int startX, startY;
@@ -57,9 +56,6 @@ public class MineGenerator : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // ---------------------------------------------------------
-    // AUTO‑LOAD ALL SCRIPTABLEOBJECT DEFINITIONS (Option C)
-    // ---------------------------------------------------------
     private void AutoLoadDefinitions()
     {
         rockDefinitions = LoadAll<RockDefinition>();
@@ -72,7 +68,6 @@ public class MineGenerator : MonoBehaviour
         recipeDefinitions = LoadAll<RecipeDefinition>();
         patternDefinitions = LoadAll<PatternDefinition>();
 
-        // Auto‑assign a biome if none set
         if (biome == null)
         {
             var biomes = LoadAll<BiomeDefinition>();
@@ -100,9 +95,6 @@ public class MineGenerator : MonoBehaviour
     }
 #endif
 
-    // ---------------------------------------------------------
-    // MAIN GENERATION
-    // ---------------------------------------------------------
     public void GenerateMine()
     {
         grid = new bool[width, height];
@@ -163,9 +155,6 @@ public class MineGenerator : MonoBehaviour
             StartCoroutine(SpawnNextFrame());
     }
 
-    // ---------------------------------------------------------
-    // EXIT TRIGGER
-    // ---------------------------------------------------------
     private void PlaceExitTrigger()
     {
         if (exitTriggerPrefab == null || tilemap == null)
@@ -187,12 +176,15 @@ public class MineGenerator : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------------------
-    // RENDER GRID USING NEW SYSTEM
-    // ---------------------------------------------------------
     private void RenderGridToTilemap()
     {
         tilemap.ClearAllTiles();
+
+        if (biome == null)
+        {
+            Debug.LogError("[MineGenerator] Biome is null. Assign a BiomeDefinition.");
+            return;
+        }
 
         MineGenerationContext ctx = new MineGenerationContext
         {
@@ -222,7 +214,7 @@ public class MineGenerator : MonoBehaviour
             .ToList();
 
         var validPattern = patternDefinitions
-            .Where(p => playerLevel >= p.levelStart && playerLevel <= p.levelEnd)
+            .Where(p => playerLevel >= p.levelStart && p.levelEnd >= playerLevel)
             .ToList();
 
         for (int x = 0; x < width; x++)
@@ -258,7 +250,6 @@ public class MineGenerator : MonoBehaviour
                         tilemap.transform
                     );
 
-                    // Rotate based on weak point direction
                     switch (rock.weakPointDirection)
                     {
                         case WeakPointDirection.Left:
@@ -278,8 +269,6 @@ public class MineGenerator : MonoBehaviour
                     TileDurabilityManager.Instance.RegisterIndicator(cellPos, indicator);
                 }
 
-
-
                 DropResult drop = DropRoller.Roll(
                     rock, ctx,
                     validOre, validGem,
@@ -291,9 +280,6 @@ public class MineGenerator : MonoBehaviour
         }
     }
 
-    // ---------------------------------------------------------
-    // WEIGHTED ROCK SELECTION
-    // ---------------------------------------------------------
     private RockDefinition GetWeightedRock(List<RockDefinition> rocks, BiomeDefinition biome)
     {
         float total = 0f;
@@ -332,9 +318,6 @@ public class MineGenerator : MonoBehaviour
         return rocks[0];
     }
 
-    // ---------------------------------------------------------
-    // PLAYER SPAWN
-    // ---------------------------------------------------------
     private IEnumerator SpawnNextFrame()
     {
         yield return null;

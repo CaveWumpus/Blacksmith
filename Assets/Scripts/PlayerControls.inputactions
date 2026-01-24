@@ -104,6 +104,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "7dd414cf-e03c-45a2-a88e-9e093ff977e1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DropMode",
+                    "type": "Button",
+                    "id": "1efadabf-b809-430a-8f67-f84d27251692",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -187,7 +205,7 @@
                 {
                     "name": "",
                     "id": "d63dbde0-f48a-48e6-bb9e-dff3ecdd00b1",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/select",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -315,6 +333,61 @@
                     "action": "ToolPrev",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f16d8a6-6541-46d2-b2a2-a8112070f96e",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Two Modifiers",
+                    "id": "7d54596a-e541-4ab5-b599-c181095685ed",
+                    "path": "TwoModifiers(modifiersOrder=2)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropMode",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier1",
+                    "id": "32dae818-ffdd-46ab-86d9-fb736a1dfaa0",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropMode",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier2",
+                    "id": "4c191ff5-5e0b-4dce-b950-e1ea8a4526a4",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropMode",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "442dd82a-f765-4071-873c-96af966e8464",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropMode",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },

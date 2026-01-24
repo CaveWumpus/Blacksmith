@@ -190,6 +190,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""7dd414cf-e03c-45a2-a88e-9e093ff977e1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""1efadabf-b809-430a-8f67-f84d27251692"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -273,7 +291,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d63dbde0-f48a-48e6-bb9e-dff3ecdd00b1"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/select"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -401,6 +419,61 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""ToolPrev"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f16d8a6-6541-46d2-b2a2-a8112070f96e"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Two Modifiers"",
+                    ""id"": ""7d54596a-e541-4ab5-b599-c181095685ed"",
+                    ""path"": ""TwoModifiers(modifiersOrder=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropMode"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier1"",
+                    ""id"": ""32dae818-ffdd-46ab-86d9-fb736a1dfaa0"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""modifier2"",
+                    ""id"": ""4c191ff5-5e0b-4dce-b950-e1ea8a4526a4"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""442dd82a-f765-4071-873c-96af966e8464"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -697,6 +770,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         m_Player_ToolNext = m_Player.FindAction("ToolNext", throwIfNotFound: true);
         m_Player_ToolPrev = m_Player.FindAction("ToolPrev", throwIfNotFound: true);
+        m_Player_Cancel = m_Player.FindAction("Cancel", throwIfNotFound: true);
+        m_Player_DropMode = m_Player.FindAction("DropMode", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
@@ -801,6 +876,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Grapple;
     private readonly InputAction m_Player_ToolNext;
     private readonly InputAction m_Player_ToolPrev;
+    private readonly InputAction m_Player_Cancel;
+    private readonly InputAction m_Player_DropMode;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -856,6 +933,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ToolPrev".
         /// </summary>
         public InputAction @ToolPrev => m_Wrapper.m_Player_ToolPrev;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_Player_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/DropMode".
+        /// </summary>
+        public InputAction @DropMode => m_Wrapper.m_Player_DropMode;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -915,6 +1000,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ToolPrev.started += instance.OnToolPrev;
             @ToolPrev.performed += instance.OnToolPrev;
             @ToolPrev.canceled += instance.OnToolPrev;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @DropMode.started += instance.OnDropMode;
+            @DropMode.performed += instance.OnDropMode;
+            @DropMode.canceled += instance.OnDropMode;
         }
 
         /// <summary>
@@ -959,6 +1050,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ToolPrev.started -= instance.OnToolPrev;
             @ToolPrev.performed -= instance.OnToolPrev;
             @ToolPrev.canceled -= instance.OnToolPrev;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @DropMode.started -= instance.OnDropMode;
+            @DropMode.performed -= instance.OnDropMode;
+            @DropMode.canceled -= instance.OnDropMode;
         }
 
         /// <summary>
@@ -1323,6 +1420,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToolPrev(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DropMode" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDropMode(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

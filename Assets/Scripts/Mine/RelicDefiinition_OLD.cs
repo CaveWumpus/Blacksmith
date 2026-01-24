@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 
 
@@ -14,3 +14,4 @@ public class RelicDefinition : TileDefinition
     [Header("Drop Weight")]
     public float dropWeight = 1f;
 }
+*/
