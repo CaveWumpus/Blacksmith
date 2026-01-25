@@ -11,20 +11,20 @@ public class ItemDefinition : ScriptableObject
     public int maxStack = 20;
     public Sprite icon;
 
-    public InventoryItemData ToInventoryItemData()
+    public InventoryItemData ToInventoryItemData(RarityTier rarity)
     {
-        // Use the global ItemType from InventoryItemData.cs
-        ItemType mappedType = isRelic ? ItemType.Special : ItemType.Ore; // adjust later if you add Gem/Alloy
+        ItemType mappedType = isRelic ? ItemType.Special : ItemType.Ore;
 
         return new InventoryItemData(
             id: this.itemName,
             name: this.itemName,
             icon: this.icon,
-            rarity: ItemRarity.Common,   // placeholder until you add rarity here
+            rarity: rarity,          // ← now using the passed rarity
             type: mappedType,
             orderRelevant: false,
             maxStack: this.maxStack
         );
     }
+
 }
 

@@ -68,17 +68,15 @@ public class MiningInventorySlotUI : MonoBehaviour
     // ---------------------------------------------------------
     // Rarity Colors
     // ---------------------------------------------------------
-    private Color GetRarityColor(ItemRarity rarity)
+    private Color GetRarityColor(RarityTier rarity)
     {
         switch (rarity)
         {
-            case ItemRarity.Common: return new Color(0.8f, 0.8f, 0.8f);
-            case ItemRarity.Uncommon: return new Color(0.2f, 1f, 0.2f);
-            case ItemRarity.Rare: return new Color(0.2f, 0.4f, 1f);
-            case ItemRarity.Epic: return new Color(0.7f, 0.2f, 1f);
-            case ItemRarity.Legendary: return new Color(1f, 0.5f, 0f);
-
-            default: return Color.white;
+            case RarityTier.Regular: return new Color(0.8f, 0.8f, 0.8f);
+            case RarityTier.Rare: return new Color(0.2f, 0.4f, 1f);
+            case RarityTier.Exotic: return new Color(1f, 0.5f, 0f);
         }
+        return Color.white;
     }
+
 }

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a28d15010b2347499cf40a97e2d7df0, type: 3}
+  m_Name: Lucky Chisel
+  m_EditorClassIdentifier: Assembly-CSharp::RelicDefinition
+  tileName: Lucky Chisel
+  tileType: 4
+  tileAsset: {fileID: 0}
+  levelStart: 1
+  levelEnd: 999
+  weakPointDirection: 0
+  weakPointMultiplier: 1
+  weakPointVFX: {fileID: 0}
+  weakPointIndicatorPrefab: {fileID: 0}
+  relicID: lucky_chisel
+  relicName: '"Lucky Chisel"'
+  description: '"You feel fate guiding your strikes.  +10% relic discovery rate."'
+  icon: {fileID: 21300000, guid: 6ecb55fbd879fc74fb1a9aec0b3f77a8, type: 3}
+  biome: 0
+  isMiningRelic: 1
+  isShopRelic: 0
+  autoDestroyCommonItems: 0
+  extendDropModeDuration: 0
+  extraInventorySlots: 0
+  miningDamageMultiplier: 1
+  miningSpeedMultiplier: 1
+  relicDiscoveryBonus: 0.1
+  gemDropBonus: 0
+  customerPatienceBonus: 0

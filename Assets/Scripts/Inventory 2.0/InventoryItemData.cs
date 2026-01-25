@@ -6,7 +6,7 @@ public struct InventoryItemData
     public string itemID;
     public string itemName;
     public Sprite icon;
-    public ItemRarity rarity;
+    public RarityTier rarity;
     public ItemType itemType;
     public bool isOrderRelevant;
 
@@ -17,7 +17,7 @@ public struct InventoryItemData
         string id,
         string name,
         Sprite icon,
-        ItemRarity rarity,
+        RarityTier rarity,
         ItemType type,
         bool orderRelevant,
         int maxStack = 20)
@@ -34,5 +34,5 @@ public struct InventoryItemData
     }
 }
 
-public enum ItemRarity { Common, Uncommon, Rare, Epic, Legendary }
+//public enum ItemRarity { Regular,Rare, Exotic }
 public enum ItemType { Ore, Gem, Alloy, Special }

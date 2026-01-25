@@ -9,6 +9,8 @@ public class RockDefinition : TileDefinition
 
     [Header("Spawn Weight")]
     public float spawnWeight = 1f;
+    [Header("XP Reward")]
+    public int xpReward = 1;
 
     [Header("Drop Chances")]
     [Range(0,1)] public float chanceRegularOre;

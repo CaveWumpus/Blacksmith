@@ -59,6 +59,9 @@ public class RelicManager : MonoBehaviour
 
     public void TickRelicTimer(float deltaTime)
     {
+        float bonus = RelicEffectResolver.GetRelicDiscoveryBonus();
+        relicTimer += deltaTime * performanceMultiplier * (1f + bonus);
+
         if (!relicsLocked)
             return;
 

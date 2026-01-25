@@ -13,8 +13,14 @@ public class DropModeController : MonoBehaviour
 
     private bool isInDropMode = false;
     private int selectedIndex = 0;
-    private float navCooldown = 0.05f;
-    private float navTimer = 0f;
+    //private float navCooldown = 0.15f;
+    //private float navTimer = 0f;
+    private bool stickWasNeutral = true;
+    private float holdTimer = 0f;
+    private float holdDelay = 0.35f;   // delay before repeat
+    private float repeatRate = 0.1f;   // speed of repeat
+
+
 
 
     // ---------------------------------------------------------
@@ -65,23 +71,27 @@ public class DropModeController : MonoBehaviour
         isInDropMode = true;
         Time.timeScale = slowTimeScale;
 
-        overlayUI.SetDropMode();
+        inventory.ResortForDropping();   // ← ADD THIS
+
         overlayUI.BuildList(inventory.GetItemsSorted());
+        overlayUI.SetDropMode();
         HighlightSmartDropCandidates();
 
         selectedIndex = 0;
         overlayUI.HighlightSlot(selectedIndex);
     }
 
-
-
     private void ExitDropMode()
     {
         isInDropMode = false;
         Time.timeScale = normalTimeScale;
 
+        // Re-sort items for HUD mode
+        inventory.ResortForHUD();
+
         overlayUI.SetHUDMode();
     }
+
 
 
     // ---------------------------------------------------------
@@ -91,23 +101,51 @@ public class DropModeController : MonoBehaviour
     {
         if (!isInDropMode) return;
 
-        navTimer -= Time.unscaledDeltaTime;
-        if (navTimer > 0f) return;
-
         Vector2 inputDir = ctx.ReadValue<Vector2>();
 
-        if (inputDir.y > 0.5f)
+        // Detect neutral
+        bool isNeutral = Mathf.Abs(inputDir.y) < 0.3f;
+        if (isNeutral)
         {
-            MoveSelection(-1);
-            navTimer = navCooldown;
+            stickWasNeutral = true;
+            holdTimer = 0f;
+            return;
         }
-        else if (inputDir.y < -0.5f)
+
+        // Detect neutral → direction transition (flick)
+        if (stickWasNeutral)
         {
-            MoveSelection(1);
-            navTimer = navCooldown;
+            if (inputDir.y > 0.5f)
+            {
+                MoveSelection(-1);
+                stickWasNeutral = false;
+                return;
+            }
+            else if (inputDir.y < -0.5f)
+            {
+                MoveSelection(1);
+                stickWasNeutral = false;
+                return;
+            }
+        }
+
+        // Holding down (repeat scrolling)
+        holdTimer += Time.unscaledDeltaTime;
+
+        if (holdTimer > holdDelay)
+        {
+            if (inputDir.y > 0.5f)
+            {
+                MoveSelection(-1);
+                holdTimer = holdDelay - repeatRate;
+            }
+            else if (inputDir.y < -0.5f)
+            {
+                MoveSelection(1);
+                holdTimer = holdDelay - repeatRate;
+            }
         }
     }
-
 
     private void MoveSelection(int delta)
     {
@@ -117,8 +155,11 @@ public class DropModeController : MonoBehaviour
             return;
 
         selectedIndex = newIndex;
+
         overlayUI.HighlightSlot(selectedIndex);
+        overlayUI.ScrollToSlot(selectedIndex);   // ← ADD THIS
     }
+
 
 
     // ---------------------------------------------------------

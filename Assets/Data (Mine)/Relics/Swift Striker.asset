@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a28d15010b2347499cf40a97e2d7df0, type: 3}
+  m_Name: Swift Striker
+  m_EditorClassIdentifier: Assembly-CSharp::RelicDefinition
+  tileName: Swift Striker
+  tileType: 4
+  tileAsset: {fileID: 0}
+  levelStart: 1
+  levelEnd: 999
+  weakPointDirection: 0
+  weakPointMultiplier: 1
+  weakPointVFX: {fileID: 0}
+  weakPointIndicatorPrefab: {fileID: 0}
+  relicID: swift_striker
+  relicName: '"Swift Striker"'
+  description: '"Your swings come faster.  +25% mining speed."'
+  icon: {fileID: 21300000, guid: 95fa183babd09704599336b4e00a109e, type: 3}
+  biome: 0
+  isMiningRelic: 1
+  isShopRelic: 0
+  autoDestroyCommonItems: 0
+  extendDropModeDuration: 0
+  extraInventorySlots: 0
+  miningDamageMultiplier: 1
+  miningSpeedMultiplier: 1.25
+  relicDiscoveryBonus: 0
+  gemDropBonus: 0
+  customerPatienceBonus: 0

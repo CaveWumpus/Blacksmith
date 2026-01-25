@@ -15,6 +15,7 @@ public class TileDurabilityManager : MonoBehaviour
 
     [Header("Tile Definitions")]
     public List<TileDefinition> allDefinitions = new List<TileDefinition>();
+    
 
     private Dictionary<TileBase, TileDefinition> tileLookup = new Dictionary<TileBase, TileDefinition>();
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
@@ -90,6 +91,9 @@ public class TileDurabilityManager : MonoBehaviour
 
     public void Damage(Vector3Int cellPos, Tilemap tilemap, int bonusDamage = 0)
     {
+        float dmgMult = RelicEffectResolver.GetMiningDamageMultiplier();
+        durabilityMap[cellPos] -= Mathf.RoundToInt((1 + bonusDamage) * dmgMult);
+
         if (!durabilityMap.ContainsKey(cellPos))
             return;
 
@@ -148,6 +152,20 @@ public class TileDurabilityManager : MonoBehaviour
     {
         if (durabilityMap[cellPos] > 0)
             return;
+        Debug.Log("ToolXPManager: " + ToolXPManager.Instance);
+        Debug.Log("PlayerMiningController: " + PlayerMiningController.Instance);
+        Debug.Log("ToolManager: " + PlayerMiningController.Instance?.toolManager);
+        Debug.Log("CurrentTool: " + PlayerMiningController.Instance?.toolManager?.CurrentTool);
+
+        // ⭐ Award XP based on rock type
+        if (def is RockDefinition rockDef)
+        {
+            int xp = rockDef.xpReward;
+            ToolXPManager.Instance.AddXP(
+                PlayerMiningController.Instance.toolManager.CurrentTool.mode,
+                xp
+            );
+        }
 
         DropResult drop = dropMap[cellPos];
 
@@ -227,7 +245,7 @@ public class TileDurabilityManager : MonoBehaviour
 
             for (int i = 0; i < yield; i++)
             {
-                InventoryItemData data = vein.item.ToInventoryItemData();
+                InventoryItemData data = vein.item.ToInventoryItemData(vein.rarity);
                 MiningInventoryController.Instance.TryAddItem(data);
             }
 

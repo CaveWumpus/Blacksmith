@@ -31,6 +31,12 @@ public class RelicDefinition : TileDefinition
     public bool autoDestroyCommonItems;
     public bool extendDropModeDuration;
     public int extraInventorySlots;
+    [Header("Mining Effects")]
+    public float miningDamageMultiplier = 1f;
+    public float miningSpeedMultiplier = 1f;
+    public float relicDiscoveryBonus = 0f;
+    public float gemDropBonus = 0f;
+
 
     [Header("Shop Effects")]
     public float customerPatienceBonus;

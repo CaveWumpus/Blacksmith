@@ -237,20 +237,44 @@ public class MineGenerator : MonoBehaviour
 
                 RockDefinition rock = GetWeightedRock(validRocks, biome);
 
+
                 tilemap.SetTile(cellPos, rock.tileAsset);
+
+                TileData tileData = tilemap.GetInstantiatedObject(cellPos)?.GetComponent<TileData>();
+
+                if (tileData != null)
+                {
+                    tileData.tileDefinition = rock; // ⭐ REQUIRED
+
+                    // Assign weak point
+                    if (Random.value < 0.40f)
+                    {
+                        tileData.weakPointDirection = (WeakPointDirection)Random.Range(1, 5);
+                        Debug.Log($"Assigned weak point {tileData.weakPointDirection} at {cellPos}");
+                    }
+                    else
+                    {
+                        tileData.weakPointDirection = WeakPointDirection.None;
+                    }
+                }
+
+
+
                 if (showWeakPointIndicators &&
-                    rock.weakPointDirection != WeakPointDirection.None &&
-                    rock.weakPointIndicatorPrefab != null)
+                    tileData != null &&
+                    tileData.hasWeakPoint &&
+                    tileData.tileDefinition != null &&
+                    tileData.tileDefinition.weakPointIndicatorPrefab != null)
                 {
                     Vector3 worldPos = tilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
                     GameObject indicator = Instantiate(
-                        rock.weakPointIndicatorPrefab,
+                        tileData.tileDefinition.weakPointIndicatorPrefab,
                         worldPos,
                         Quaternion.identity,
                         tilemap.transform
                     );
 
-                    switch (rock.weakPointDirection)
+                    switch (tileData.weakPointDirection)
                     {
                         case WeakPointDirection.Left:
                             indicator.transform.rotation = Quaternion.Euler(0, 0, 180);
@@ -269,6 +293,7 @@ public class MineGenerator : MonoBehaviour
                     TileDurabilityManager.Instance.RegisterIndicator(cellPos, indicator);
                 }
 
+
                 DropResult drop = DropRoller.Roll(
                     rock, ctx,
                     validOre, validGem,
@@ -276,6 +301,7 @@ public class MineGenerator : MonoBehaviour
                 );
 
                 TileDurabilityManager.Instance.AssignTile(cellPos, rock, drop);
+
             }
         }
     }

@@ -17,13 +17,13 @@ MonoBehaviour:
   tileAsset: {fileID: 11400000, guid: 041e2e8fd1d0ab54f9f391c141e1f40b, type: 2}
   levelStart: 1
   levelEnd: 999
-  weakPointDirection: 1
   weakPointMultiplier: 1
   weakPointVFX: {fileID: 0}
   weakPointIndicatorPrefab: {fileID: 7199484598000864259, guid: db988a2aebe01254d8edf1f1466c301d, type: 3}
   minDurability: 2
   maxDurability: 2
   spawnWeight: 5
+  xpReward: 1
   chanceRegularOre: 0.1
   chanceRareOre: 0.03
   chanceExoticOre: 0.005

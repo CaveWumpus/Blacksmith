@@ -48,7 +48,7 @@ public class PlayerMiningController : MonoBehaviour
     public float hammerCooldown = 0.5f;
     private float hammerTimer = 0f;
 
-
+    public static PlayerMiningController Instance { get; private set; }
 
     [Header("Tilemap Reference (for Wide Swing)")]
     public Tilemap mineTilemap;
@@ -58,6 +58,10 @@ public class PlayerMiningController : MonoBehaviour
 
     private float mineTimer;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Update()
     {
@@ -124,6 +128,9 @@ public class PlayerMiningController : MonoBehaviour
 
                 if (useComboMining && comboModule != null)
                     cooldown = comboModule.GetModifiedCooldown(mineCooldown);
+                // ⭐ Apply relic mining speed multiplier 
+                float speedMult = RelicEffectResolver.GetMiningSpeedMultiplier(); 
+                cooldown /= speedMult;
 
                 mineTimer = cooldown;
             }
@@ -183,7 +190,7 @@ public class PlayerMiningController : MonoBehaviour
 
         Vector2 direction = GetMiningDirection();
         RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, mineRange, mineableLayer);
-
+        Debug.Log("Raycast hit: " + (hit.collider ? hit.collider.gameObject.name : "NULL"));
         if (hit.collider == null)
             return;
 
@@ -199,21 +206,64 @@ public class PlayerMiningController : MonoBehaviour
         int baseDamage = 1;
         float scaled = baseDamage * chargeMultiplier * tool.damageMultiplier;
         int finalDamage = Mathf.RoundToInt(scaled);
+        //Debug.Log($"TileData at hit: {tileData?.weakPointDirection}");
+        //Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
+        
 
         // Weak point logic
-        if (tileData != null && HitWeakPoint(direction, tileData.tileDefinition))
+        bool hitWeakSpot = tileData != null && HitWeakPoint(direction, tileData);
+
+        if (hitWeakSpot)
         {
             finalDamage += Mathf.RoundToInt(tileData.tileDefinition.weakPointMultiplier);
 
             if (tileData.tileDefinition.weakPointVFX != null)
                 Instantiate(tileData.tileDefinition.weakPointVFX, hit.point, Quaternion.identity);
+
+            // ⭐ Precision Pick Level 2 ability: Weak Spot Chaining
+            if (ToolXPManager.Instance.IsAbilityUnlocked(ToolMode.PrecisionPick, 1))
+            {
+                PerformWeakSpotChain(tilemap, cellPos, direction, finalDamage);
+            }
         }
+
         var flash = tilemap.GetComponent<TileFlashEffect>();
         if (flash != null)
             flash.FlashTile(cellPos);
 
         TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
     }
+    private void PerformWeakSpotChain(Tilemap tilemap, Vector3Int startCell, Vector2 direction, int initialDamage)
+    {
+        int chainLength = 2; // Level 2 ability: chain 2 tiles
+        float falloff = 1f;
+
+        int damage = initialDamage;
+
+        Vector3Int currentCell = startCell;
+
+        for (int i = 0; i < chainLength; i++)
+        {
+            // Move one tile forward in the mining direction
+            currentCell += new Vector3Int(
+                Mathf.RoundToInt(direction.x),
+                Mathf.RoundToInt(direction.y),
+                0
+            );
+
+            TileBase tile = tilemap.GetTile(currentCell);
+            if (tile == null)
+                break;
+
+            int dmgToApply = Mathf.Max(1, Mathf.RoundToInt(damage * falloff));
+
+            TileDurabilityManager.Instance.Damage(currentCell, tilemap, dmgToApply - 1);
+
+            damage = dmgToApply;
+        }
+    }
+
+
     // ---------------------------------------------------------
     // WIDE SWING MINING
     // ---------------------------------------------------------
@@ -416,25 +466,24 @@ public class PlayerMiningController : MonoBehaviour
         float facing = transform.localScale.x > 0 ? 1 : -1;
         return new Vector2(facing, 0);
     }
-    private bool HitWeakPoint(Vector2 direction, TileDefinition def)
+    private bool HitWeakPoint(Vector2 direction, TileData tileData)
     {
-        if (def == null || def.weakPointDirection == WeakPointDirection.None)
+        if (tileData == null || !tileData.hasWeakPoint)
             return false;
 
-        switch (def.weakPointDirection)
+        switch (tileData.weakPointDirection)
         {
-            case WeakPointDirection.Left:
-                return direction.x < 0;
-            case WeakPointDirection.Right:
-                return direction.x > 0;
-            case WeakPointDirection.Up:
-                return direction.y > 0;
-            case WeakPointDirection.Down:
-                return direction.y < 0;
+            case WeakPointDirection.Left:  return direction.x < 0;
+            case WeakPointDirection.Right: return direction.x > 0;
+            case WeakPointDirection.Up:    return direction.y > 0;
+            case WeakPointDirection.Down:  return direction.y < 0;
         }
 
         return false;
     }
+
+
+
 
     void OnDrawGizmosSelected()
     {

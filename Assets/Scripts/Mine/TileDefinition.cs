@@ -22,7 +22,7 @@ public class TileDefinition : ScriptableObject
     public int levelEnd;
 
     [Header("Weak Point Settings")]
-    public WeakPointDirection weakPointDirection = WeakPointDirection.None;
+    //public WeakPointDirection weakPointDirection = WeakPointDirection.None;
     public float weakPointMultiplier = 1.0f;
 
     [Header("Weak Point Visuals")]

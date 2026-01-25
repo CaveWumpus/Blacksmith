@@ -56,6 +56,18 @@ public class ToolModeManager : MonoBehaviour
 
 
     }
+    public bool IsAbilityUnlocked(ToolMode tool, int abilityIndex)
+    {
+        var state = ToolXPManager.Instance.GetState(tool);
+        return abilityIndex switch
+        {
+            1 => state.ability1Unlocked,
+            2 => state.ability2Unlocked,
+            3 => state.ability3Unlocked,
+            _ => false
+        };
+    }
+
 
     void OnGUI()
     {

@@ -57,9 +57,7 @@ GameObject:
   - component: {fileID: 8254455342577367218}
   - component: {fileID: 7826344081716390126}
   - component: {fileID: 2271530662634246640}
-  - component: {fileID: 2667171869982205909}
   - component: {fileID: 7778917533578698512}
-  - component: {fileID: 9127190839443374394}
   m_Layer: 7
   m_Name: MineTilemap
   m_TagString: Untagged
@@ -79,7 +77,8 @@ Transform:
   m_LocalPosition: {x: -2.66897, y: -1.46659, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8197679299892592927}
   m_Father: {fileID: 2293310143203199305}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1839735485 &8254455342577367218
@@ -214,19 +213,6 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
---- !u!114 &2667171869982205909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7504148707962797105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64dfed0f83bdbc447a9216e9d3611edb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileData
-  tileDefinition: {fileID: 11400000, guid: 2c7257b78f5e2464ba044cb0dad0d6e5, type: 2}
 --- !u!114 &7778917533578698512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,16 +228,77 @@ MonoBehaviour:
   tilemap: {fileID: 8254455342577367218}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.1
---- !u!114 &9127190839443374394
-MonoBehaviour:
+--- !u!1001 &1547709751029334858
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1626579093218316463}
+    m_Modifications:
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 89.56167
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 66.55302
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940812301518933852, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_Name
+      value: RockTilePrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940812301518933852, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8999932331953323720, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8999932331953323720, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+--- !u!4 &8197679299892592927 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7259398195286426197, guid: f5854d4e60c34aa4e9e89a5756be6663, type: 3}
+  m_PrefabInstance: {fileID: 1547709751029334858}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7504148707962797105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74e97b1975a9c3f4a86f48c892aac1f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeakPointIndicatorSpawner
-  definition: {fileID: 11400000, guid: 84e4d2cc374747c40840b1d7c76bc516, type: 2}

@@ -97,6 +97,48 @@ public class MiningInventoryController : MonoBehaviour
     {
         return new List<InventoryItemData>(items);
     }
+    public List<InventoryItemData> GetItemsSortedForDropping()
+    {
+        // Least valuable items first
+        List<InventoryItemData> sorted = new List<InventoryItemData>(items);
+
+        sorted.Sort((a, b) =>
+        {
+            // 1. Items that are NOT order relevant should come first
+            int orderCompare = a.isOrderRelevant.CompareTo(b.isOrderRelevant);
+            if (orderCompare != 0) return orderCompare;
+
+            // 2. Lower rarity first
+            int rarityCompare = a.rarity.CompareTo(b.rarity);
+            if (rarityCompare != 0) return rarityCompare;
+
+            // 3. Item type fallback
+            return a.itemType.CompareTo(b.itemType);
+        });
+
+        return sorted;
+    }
+    public void ResortForHUD()
+    {
+        AutoSort();
+        OnInventoryChanged?.Invoke();
+    }
+    public void ResortForDropping()
+    {
+        items.Sort((a, b) =>
+        {
+            int orderCompare = a.isOrderRelevant.CompareTo(b.isOrderRelevant);
+            if (orderCompare != 0) return orderCompare;
+
+            int rarityCompare = a.rarity.CompareTo(b.rarity);
+            if (rarityCompare != 0) return rarityCompare;
+
+            return a.itemType.CompareTo(b.itemType);
+        });
+    }
+
+
+
 
     public List<int> GetSmartDropCandidates()
     {

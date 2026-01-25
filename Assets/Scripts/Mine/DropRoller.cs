@@ -83,11 +83,22 @@ public static class DropRoller
     private static DropResult RollGem(List<VeinDefinition> pool, RarityTier rarity)
     {
         var candidates = pool.Where(v => v.rarity == rarity).ToList();
-        if (candidates.Count == 0) return DropResult.Nothing;
+        if (candidates.Count == 0) 
+            return DropResult.Nothing;
 
-        var chosen = candidates[Random.Range(0, candidates.Count)];
-        return new DropResult { dropType = TileType.Gem, vein = chosen };
+        // ⭐ Relic bonus chance
+        float gemBonus = RelicEffectResolver.GetGemDropBonus();
+        if (Random.value < gemBonus)
+        {
+            var chosen = candidates[Random.Range(0, candidates.Count)];
+            return new DropResult { dropType = TileType.Gem, vein = chosen };
+        }
+
+        // ⭐ Normal gem roll (fallback)
+        var fallback = candidates[Random.Range(0, candidates.Count)];
+        return new DropResult { dropType = TileType.Gem, vein = fallback };
     }
+
 
     private static DropResult RollRelic(List<RelicDefinition> pool, MineGenerationContext ctx)
     {

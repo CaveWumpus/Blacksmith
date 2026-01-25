@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolModeDefinition
   mode: 0
   chargeSpeedMultiplier: 0.7
-  damageMultiplier: 1.5
+  damageMultiplier: 10
   weakPointBonus: 1
   aoeRadius: 0
   staminaCost: 0
