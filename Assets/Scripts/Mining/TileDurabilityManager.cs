@@ -9,6 +9,8 @@ using UnityEditor;
 public class TileDurabilityManager : MonoBehaviour
 {
     public static TileDurabilityManager Instance;
+    public Tilemap mineTilemap;
+
 
     [Header("Definitions (Manual Mode)")]
     public bool useAutoLoad = true;
@@ -21,6 +23,8 @@ public class TileDurabilityManager : MonoBehaviour
     private Dictionary<Vector3Int, int> durabilityMap = new Dictionary<Vector3Int, int>();
     private Dictionary<Vector3Int, DropResult> dropMap = new Dictionary<Vector3Int, DropResult>();
     private Dictionary<Vector3Int, GameObject> weakPointIndicators = new Dictionary<Vector3Int, GameObject>();
+    // ⭐ NEW: weak point direction per cell private 
+    Dictionary<Vector3Int, WeakPointDirection> weakPointMap = new Dictionary<Vector3Int, WeakPointDirection>();
 
     private void Awake()
     {
@@ -70,6 +74,11 @@ public class TileDurabilityManager : MonoBehaviour
 
         Debug.Log($"[TileDurabilityManager] Built lookup for {tileLookup.Count} tile assets.");
     }
+    public bool TryGetDefinition(TileBase tile, out TileDefinition def)
+    {
+        return tileLookup.TryGetValue(tile, out def);
+    }
+
 
     public void AssignTile(Vector3Int cellPos, TileDefinition def, DropResult drop)
     {
@@ -83,6 +92,24 @@ public class TileDurabilityManager : MonoBehaviour
         durabilityMap[cellPos] = durability;
         dropMap[cellPos] = drop;
     }
+
+    // ⭐ NEW: weak point setters/getters
+    public void SetWeakPoint(Vector3Int cellPos, WeakPointDirection dir)
+    {
+        if (dir == WeakPointDirection.None)
+            weakPointMap.Remove(cellPos);
+        else
+            weakPointMap[cellPos] = dir;
+    }
+
+    public WeakPointDirection GetWeakPoint(Vector3Int cellPos)
+    {
+        if (weakPointMap.TryGetValue(cellPos, out var dir))
+            return dir;
+
+        return WeakPointDirection.None;
+    }
+
 
     public void RegisterIndicator(Vector3Int cellPos, GameObject indicator)
     {
@@ -152,10 +179,10 @@ public class TileDurabilityManager : MonoBehaviour
     {
         if (durabilityMap[cellPos] > 0)
             return;
-        Debug.Log("ToolXPManager: " + ToolXPManager.Instance);
-        Debug.Log("PlayerMiningController: " + PlayerMiningController.Instance);
-        Debug.Log("ToolManager: " + PlayerMiningController.Instance?.toolManager);
-        Debug.Log("CurrentTool: " + PlayerMiningController.Instance?.toolManager?.CurrentTool);
+        //Debug.Log("ToolXPManager: " + ToolXPManager.Instance);
+        //Debug.Log("PlayerMiningController: " + PlayerMiningController.Instance);
+        //Debug.Log("ToolManager: " + PlayerMiningController.Instance?.toolManager);
+        //Debug.Log("CurrentTool: " + PlayerMiningController.Instance?.toolManager?.CurrentTool);
 
         // ⭐ Award XP based on rock type
         if (def is RockDefinition rockDef)
@@ -325,12 +352,16 @@ public class TileDurabilityManager : MonoBehaviour
         durabilityMap.Remove(cellPos);
         dropMap.Remove(cellPos);
 
+        // ⭐ NEW: clear weak point data
+        weakPointMap.Remove(cellPos);
+
         if (weakPointIndicators.TryGetValue(cellPos, out GameObject indicator))
         {
             Destroy(indicator);
             weakPointIndicators.Remove(cellPos);
         }
     }
+
 
     private bool TryForceRelicTile(Vector3Int cellPos, Tilemap tilemap)
     {
@@ -366,4 +397,27 @@ public class TileDurabilityManager : MonoBehaviour
 
         return true;
     }
+    public void DebugWeakPoint(Vector3Int cellPos)
+    {
+        TileBase tile = null;
+        if (mineTilemap != null)
+            tile = mineTilemap.GetTile(cellPos);
+
+        TileDefinition def = null;
+        TryGetDefinition(tile, out def);
+
+        bool hasDurability = durabilityMap.ContainsKey(cellPos);
+        WeakPointDirection dir = GetWeakPoint(cellPos);
+
+        Debug.Log(
+            $"[TileDebug] Cell {cellPos} | " +
+            $"Tile: {(tile ? tile.name : "NULL")} | " +
+            $"Def: {(def ? def.name : "NONE")} | " +
+            $"Durability: {(hasDurability ? durabilityMap[cellPos].ToString() : "NONE")} | " +
+            $"WeakPoint: {dir}"
+        );
+    }
+
+
+
 }

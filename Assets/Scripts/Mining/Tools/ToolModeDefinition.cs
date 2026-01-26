@@ -6,6 +6,12 @@ public class ToolModeDefinition : ScriptableObject
     [Header("Identity")]
     public ToolMode mode;
 
+    [Header("Progression Levels")]
+    public ToolLevelBehaviour[] levels;
+
+    [Header("Damage")]
+    public int baseDamage = 1;
+
     [Header("Charge Behavior")]
     public float chargeSpeedMultiplier = 1f;   // 1 = normal, <1 = slower, >1 = faster
     public float damageMultiplier = 1f;        // base damage scaling
@@ -20,4 +26,9 @@ public class ToolModeDefinition : ScriptableObject
     [Header("Visuals & Audio")]
     public GameObject hitVFX;
     public AudioClip hitSFX;
+
+    [Header("Debug")]
+    public bool overrideDamage = false;
+    public int debugDamageValue = 1;
+
 }

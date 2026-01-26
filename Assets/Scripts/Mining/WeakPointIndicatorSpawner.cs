@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class WeakPointIndicatorSpawner : MonoBehaviour
@@ -55,3 +55,4 @@ public class WeakPointIndicatorSpawner : MonoBehaviour
         }
     }
 }
+*/

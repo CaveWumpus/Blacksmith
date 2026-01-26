@@ -45,6 +45,8 @@ public class MineGenerator : MonoBehaviour
     private Vector2 spawnPoint;
     private int startX, startY;
     private bool startOnLeft;
+    float baseOffset = 90f; // adjust this until the sprite points correctly
+
 
     private void Start()
     {
@@ -237,63 +239,52 @@ public class MineGenerator : MonoBehaviour
 
                 RockDefinition rock = GetWeightedRock(validRocks, biome);
 
-
                 tilemap.SetTile(cellPos, rock.tileAsset);
 
-                TileData tileData = tilemap.GetInstantiatedObject(cellPos)?.GetComponent<TileData>();
-
-                if (tileData != null)
+                // ⭐ NEW: roll weak point direction as pure data
+                WeakPointDirection weakDir = WeakPointDirection.None;
+                if (Random.value < 0.40f)
                 {
-                    tileData.tileDefinition = rock; // ⭐ REQUIRED
-
-                    // Assign weak point
-                    if (Random.value < 0.40f)
-                    {
-                        tileData.weakPointDirection = (WeakPointDirection)Random.Range(1, 5);
-                        Debug.Log($"Assigned weak point {tileData.weakPointDirection} at {cellPos}");
-                    }
-                    else
-                    {
-                        tileData.weakPointDirection = WeakPointDirection.None;
-                    }
+                    weakDir = (WeakPointDirection)Random.Range(1, 5);
+                    //Debug.Log($"Assigned weak point {weakDir} at {cellPos}");
                 }
 
+                // Store weak point in TileDurabilityManager
+                TileDurabilityManager.Instance.SetWeakPoint(cellPos, weakDir);
 
-
+                // ⭐ Optional: spawn indicator based on data + rock definition
                 if (showWeakPointIndicators &&
-                    tileData != null &&
-                    tileData.hasWeakPoint &&
-                    tileData.tileDefinition != null &&
-                    tileData.tileDefinition.weakPointIndicatorPrefab != null)
+                    weakDir != WeakPointDirection.None &&
+                    rock.weakPointIndicatorPrefab != null)
                 {
                     Vector3 worldPos = tilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
                     GameObject indicator = Instantiate(
-                        tileData.tileDefinition.weakPointIndicatorPrefab,
+                        rock.weakPointIndicatorPrefab,
                         worldPos,
                         Quaternion.identity,
                         tilemap.transform
                     );
 
-                    switch (tileData.weakPointDirection)
+                    switch (weakDir)
                     {
                         case WeakPointDirection.Left:
-                            indicator.transform.rotation = Quaternion.Euler(0, 0, 180);
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 180 + baseOffset);
                             break;
                         case WeakPointDirection.Right:
-                            indicator.transform.rotation = Quaternion.Euler(0, 0, 0);
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 0 + baseOffset);
                             break;
                         case WeakPointDirection.Up:
-                            indicator.transform.rotation = Quaternion.Euler(0, 0, 90);
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 90 + baseOffset);
                             break;
                         case WeakPointDirection.Down:
-                            indicator.transform.rotation = Quaternion.Euler(0, 0, 270);
+                            indicator.transform.rotation = Quaternion.Euler(0, 0, 270 + baseOffset);
                             break;
                     }
 
                     TileDurabilityManager.Instance.RegisterIndicator(cellPos, indicator);
                 }
 
-
+                // Existing drop + durability wiring stays the same
                 DropResult drop = DropRoller.Roll(
                     rock, ctx,
                     validOre, validGem,

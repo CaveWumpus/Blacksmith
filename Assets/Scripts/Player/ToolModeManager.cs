@@ -12,6 +12,10 @@ public class ToolModeManager : MonoBehaviour
     [Header("Input")]
     public PlayerInputHandler input;
 
+    public int currentLevelIndex = 0;
+    public ToolLevelBehaviour CurrentLevel => CurrentTool.levels[currentLevelIndex];
+
+
     //[Header("Drill State")]
     //public float drillTimer = 0f;
 
@@ -67,7 +71,10 @@ public class ToolModeManager : MonoBehaviour
             _ => false
         };
     }
-
+    public void SetToolLevel(int level)
+    {
+        currentLevelIndex = Mathf.Clamp(level, 0, CurrentTool.levels.Length - 1);
+    }
 
     void OnGUI()
     {

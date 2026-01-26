@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: PrecisionPick
   m_EditorClassIdentifier: Assembly-CSharp::ToolModeDefinition
   mode: 0
+  levels:
+  - {fileID: 11400000, guid: 696ec01bfb1a9e345866285dadc1869a, type: 2}
+  - {fileID: 11400000, guid: f6b2ddf693f31e34c8a40edc42a1eb61, type: 2}
+  - {fileID: 11400000, guid: 832a1774d7aba214b93f02bc16b4aae3, type: 2}
+  baseDamage: 4
   chargeSpeedMultiplier: 0.7
   damageMultiplier: 10
   weakPointBonus: 1
@@ -20,3 +25,5 @@ MonoBehaviour:
   staminaCost: 0
   hitVFX: {fileID: 0}
   hitSFX: {fileID: 0}
+  overrideDamage: 0
+  debugDamageValue: 1

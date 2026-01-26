@@ -46,7 +46,7 @@ public class LootPopup : MonoBehaviour
         // Fade with curve
         float fade = fadeCurve.Evaluate(t);
         canvasGroup.alpha = fade;
-        Debug.Log($"t={t}, rise={riseAmount}, fade={fade}");
+        //Debug.Log($"t={t}, rise={riseAmount}, fade={fade}");
 
 
         if (timer >= lifetime)

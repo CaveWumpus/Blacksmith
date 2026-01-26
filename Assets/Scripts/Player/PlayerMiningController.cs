@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
+
 
 public class PlayerMiningController : MonoBehaviour
 {
     [Header("References")]
     public PlayerInputHandler input;
     public Transform mineOrigin;
-    public LayerMask mineableLayer;
+    //public LayerMask mineableLayer;
 
     [Header("Mining Settings")]
     public float mineRange = 1.2f;
@@ -48,6 +51,10 @@ public class PlayerMiningController : MonoBehaviour
     public float hammerCooldown = 0.5f;
     private float hammerTimer = 0f;
 
+    [Header("Debug Gizmos")]
+    public bool showMiningGizmos = true;
+
+
     public static PlayerMiningController Instance { get; private set; }
 
     [Header("Tilemap Reference (for Wide Swing)")]
@@ -67,6 +74,13 @@ public class PlayerMiningController : MonoBehaviour
     {
         mineTimer -= Time.deltaTime;
         hammerTimer -= Time.deltaTime;
+
+        if (Keyboard.current.f3Key.wasPressedThisFrame)
+        {
+            if (TryGetTargetCell(out Vector3Int cell, out Tilemap map))
+                TileDurabilityManager.Instance.DebugWeakPoint(cell);
+        }
+
 
         // DRILL continuous mining
         if (toolManager.CurrentTool.mode == ToolMode.Drill && input.mineHeld)
@@ -116,32 +130,8 @@ public class PlayerMiningController : MonoBehaviour
                 ReleaseMiningCharge();
             }
         }
-        else
-        {
-            // -----------------------------
-            // TAP-TO-MINE (legacy mode)
-            // -----------------------------
-            if (input.minePressed && mineTimer <= 0)
-            {
-                TryMine();
-                float cooldown = mineCooldown;
-
-                if (useComboMining && comboModule != null)
-                    cooldown = comboModule.GetModifiedCooldown(mineCooldown);
-                // ⭐ Apply relic mining speed multiplier 
-                float speedMult = RelicEffectResolver.GetMiningSpeedMultiplier(); 
-                cooldown /= speedMult;
-
-                mineTimer = cooldown;
-            }
-        }
-
-        // Debug rays
-        Debug.DrawRay(mineOrigin.position, GetMiningDirection() * mineRange, Color.red);
-        Debug.DrawRay(mineOrigin.position, Vector2.down * mineRange, Color.blue);
-        Debug.DrawRay(mineOrigin.position, Vector2.up * mineRange, Color.blue);
+        
     }
-
 
     // ---------------------------------------------------------
     // HOLD-TO-MINE RELEASE LOGIC
@@ -166,73 +156,29 @@ public class PlayerMiningController : MonoBehaviour
         currentCharge = 0f;
     }
 
-
     // ---------------------------------------------------------
     // CHARGED MINING HIT
     // ---------------------------------------------------------
     private void PerformChargedMine(float chargeMultiplier)
     {
-        
-        if (toolManager.CurrentTool.mode == ToolMode.Hammer)
-        {
-            PerformHammer();
+        if (!TryGetTargetCell(out Vector3Int cellPos, out Tilemap tilemap))
             return;
-        }
+        Debug.Log("Using tool: " + toolManager.CurrentTool.name);
 
-        // WIDE SWING OVERRIDE
-        if (toolManager.CurrentTool.mode == ToolMode.WideSwing)
-        {
-            PerformWideSwing();
-            return;
-        }
+        toolManager.CurrentLevel.PerformMining(this, cellPos, tilemap, chargeMultiplier);
+    }
 
+    public int ComputeBaseDamage(float chargeMultiplier)
+    {
         var tool = toolManager.CurrentTool;
 
-        Vector2 direction = GetMiningDirection();
-        RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, mineRange, mineableLayer);
-        Debug.Log("Raycast hit: " + (hit.collider ? hit.collider.gameObject.name : "NULL"));
-        if (hit.collider == null)
-            return;
+        if (tool.overrideDamage)
+            return tool.debugDamageValue;
 
-        Tilemap tilemap = hit.collider.GetComponentInParent<Tilemap>();
-        TileData tileData = hit.collider.GetComponentInParent<TileData>();
-
-        if (tilemap == null)
-            return;
-
-        Vector3 hitPos = hit.point + direction * 0.05f;
-        Vector3Int cellPos = tilemap.WorldToCell(hitPos);
-
-        int baseDamage = 1;
-        float scaled = baseDamage * chargeMultiplier * tool.damageMultiplier;
-        int finalDamage = Mathf.RoundToInt(scaled);
-        //Debug.Log($"TileData at hit: {tileData?.weakPointDirection}");
-        //Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
-        
-
-        // Weak point logic
-        bool hitWeakSpot = tileData != null && HitWeakPoint(direction, tileData);
-
-        if (hitWeakSpot)
-        {
-            finalDamage += Mathf.RoundToInt(tileData.tileDefinition.weakPointMultiplier);
-
-            if (tileData.tileDefinition.weakPointVFX != null)
-                Instantiate(tileData.tileDefinition.weakPointVFX, hit.point, Quaternion.identity);
-
-            // ⭐ Precision Pick Level 2 ability: Weak Spot Chaining
-            if (ToolXPManager.Instance.IsAbilityUnlocked(ToolMode.PrecisionPick, 1))
-            {
-                PerformWeakSpotChain(tilemap, cellPos, direction, finalDamage);
-            }
-        }
-
-        var flash = tilemap.GetComponent<TileFlashEffect>();
-        if (flash != null)
-            flash.FlashTile(cellPos);
-
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
+        float scaled = tool.baseDamage * chargeMultiplier * tool.damageMultiplier;
+        return Mathf.Max(1, Mathf.RoundToInt(scaled));
     }
+
     private void PerformWeakSpotChain(Tilemap tilemap, Vector3Int startCell, Vector2 direction, int initialDamage)
     {
         int chainLength = 2; // Level 2 ability: chain 2 tiles
@@ -263,7 +209,6 @@ public class PlayerMiningController : MonoBehaviour
         }
     }
 
-
     // ---------------------------------------------------------
     // WIDE SWING MINING
     // ---------------------------------------------------------
@@ -271,9 +216,9 @@ public class PlayerMiningController : MonoBehaviour
     {
         Vector2 origin = mineOrigin.position;
         Vector2 direction = GetMiningDirection();
+        Tilemap tilemap = mineTilemap;
 
-        var tilemap = mineTilemap;
-
+        // Get all tiles in the arc
         var hitTiles = GetTilesInArc(origin, direction, swingRange, swingAngle);
 
         int hits = 0;
@@ -287,20 +232,27 @@ public class PlayerMiningController : MonoBehaviour
             if (tile == null)
                 continue;
 
+            // Flash effect
+            var flash = tilemap.GetComponent<TileFlashEffect>();
+            if (flash != null)
+                flash.FlashTile(cell);
+
+            // Apply damage
             TileDurabilityManager.Instance.Damage(cell, tilemap, swingDamage - 1);
             hits++;
         }
 
         // TODO: Add swing animation, SFX, VFX
     }
+
     // ---------------------------------------------------------
     // ARC SELECTION FOR WIDE SWING
     // ---------------------------------------------------------
-    private System.Collections.Generic.List<Vector3Int> GetTilesInArc(
-        Vector2 origin, Vector2 direction, float range, float angle)
+    private List<Vector3Int> GetTilesInArc(
+    Vector2 origin, Vector2 direction, float range, float angle)
     {
-        var results = new System.Collections.Generic.List<Vector3Int>();
-        var tilemap = mineTilemap;
+        var results = new List<Vector3Int>();
+        Tilemap tilemap = mineTilemap;
 
         int radius = Mathf.CeilToInt(range);
 
@@ -310,6 +262,10 @@ public class PlayerMiningController : MonoBehaviour
             {
                 Vector3 worldPos = origin + new Vector2(x, y);
                 Vector3Int cell = tilemap.WorldToCell(worldPos);
+
+                // Avoid duplicates
+                if (results.Contains(cell))
+                    continue;
 
                 Vector2 toTile = (Vector2)(tilemap.GetCellCenterWorld(cell) - (Vector3)origin);
                 float dist = toTile.magnitude;
@@ -327,50 +283,44 @@ public class PlayerMiningController : MonoBehaviour
 
         return results;
     }
+
     // ---------------------------------------------------------
     // DRILL MINING (continuous damage while held)
     // ---------------------------------------------------------
     private void PerformDrill()
     {
+        // Tick timer
         drillTimer -= Time.deltaTime;
         if (drillTimer > 0f)
             return;
 
         drillTimer = drillTickRate;
-        Debug.Log("Drill tick attempt");
-        Debug.Log("drillTimer = " + drillTimer);
 
-
-        Vector2 direction = GetMiningDirection();
-        RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, drillRange, mineableLayer);
-
-        if (hit.collider == null)
+        // ⭐ NEW: grid-based targeting
+        if (!TryGetTargetCell(out Vector3Int cellPos, out Tilemap tilemap))
             return;
 
-        Tilemap tilemap = hit.collider.GetComponentInParent<Tilemap>();
-        if (tilemap == null)
+        TileBase tile = tilemap.GetTile(cellPos);
+        if (tile == null)
             return;
 
-        Vector3 hitPos = hit.point + direction * 0.05f;
-        Vector3Int cellPos = tilemap.WorldToCell(hitPos);
-
-        // Drill damage ignores weak points for now
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, drillDamage - 1);
-        Debug.DrawRay(mineOrigin.position, direction * drillRange, Color.green);
-        if (hit.collider == null)
-        {
-            Debug.Log("Drill raycast hit NOTHING");
+        // Lookup tile definition
+        TileDefinition def;
+        if (!TileDurabilityManager.Instance.TryGetDefinition(tile, out def))
             return;
-        }
-        if (tilemap == null)
-        {
-            Debug.Log("Drill found collider but no tilemap");
-            return;
-        }
 
+        // Drill damage ignores weak points (for now)
+        int damage = drillDamage - 1;
 
-        // TODO: Add drill VFX, sparks, sound loop
+        // Flash effect
+        var flash = tilemap.GetComponent<TileFlashEffect>();
+        if (flash != null)
+            flash.FlashTile(cellPos);
+
+        // Apply damage
+        TileDurabilityManager.Instance.Damage(cellPos, tilemap, damage);
     }
+
     public void ResetDrillTimer()
     {
         drillTimer = 0f;
@@ -385,32 +335,33 @@ public class PlayerMiningController : MonoBehaviour
 
         hammerTimer = hammerCooldown;
 
-        Vector2 direction = GetMiningDirection();
-        RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, hammerRange, mineableLayer);
-
-        if (hit.collider == null)
+        // ⭐ NEW: grid-based targeting
+        if (!TryGetTargetCell(out Vector3Int centerCell, out Tilemap tilemap))
             return;
 
-        Tilemap tilemap = hit.collider.GetComponentInParent<Tilemap>();
-        if (tilemap == null)
-            return;
-
-        Vector3 hitPos = hit.point + direction * 0.05f;
-        Vector3Int centerCell = tilemap.WorldToCell(hitPos);
-
-        // AoE damage
+        // AoE damage around the center cell
         for (int x = -hammerRadius; x <= hammerRadius; x++)
         {
             for (int y = -hammerRadius; y <= hammerRadius; y++)
             {
                 Vector3Int cell = new Vector3Int(centerCell.x + x, centerCell.y + y, centerCell.z);
+
+                TileBase tile = tilemap.GetTile(cell);
+                if (tile == null)
+                    continue;
+
+                // Flash effect
+                var flash = tilemap.GetComponent<TileFlashEffect>();
+                if (flash != null)
+                    flash.FlashTile(cell);
+
+                // Apply damage
                 TileDurabilityManager.Instance.Damage(cell, tilemap, hammerDamage - 1);
             }
         }
 
         // TODO: Add hammer VFX, shockwave, screen shake, sound
     }
-
 
     private void MineAoE(Vector3Int center, Tilemap tilemap, int damage, int radius)
     {
@@ -424,41 +375,10 @@ public class PlayerMiningController : MonoBehaviour
         }
     }
 
-
-
-    // ---------------------------------------------------------
-    // TAP-TO-MINE (legacy)
-    // ---------------------------------------------------------
-    void TryMine()
-    {
-        Vector2 direction = GetMiningDirection();
-        RaycastHit2D hit = Physics2D.Raycast(mineOrigin.position, direction, mineRange, mineableLayer);
-
-        if (hit.collider != null)
-        {
-            Tilemap tilemap = hit.collider.GetComponentInParent<Tilemap>();
-            if (tilemap != null)
-            {
-                Vector3 hitPos = hit.point + direction * 0.05f;
-                Vector3Int cellPos = tilemap.WorldToCell(hitPos);
-
-                int bonus = 0;
-                if (useComboMining && comboModule != null)
-                    bonus = comboModule.GetBonusDamage();
-
-                TileDurabilityManager.Instance.Damage(cellPos, tilemap, bonus);
-
-                if (useComboMining && comboModule != null)
-                    comboModule.RegisterSuccessfulHit();
-            }
-        }
-    }
-
-
     // ---------------------------------------------------------
     // MINING DIRECTION
     // ---------------------------------------------------------
-    Vector2 GetMiningDirection()
+    public Vector2 GetMiningDirection()
     {
         if (input.moveInput.y > 0.5f) return Vector2.up;
         if (input.moveInput.y < -0.5f) return Vector2.down;
@@ -466,12 +386,12 @@ public class PlayerMiningController : MonoBehaviour
         float facing = transform.localScale.x > 0 ? 1 : -1;
         return new Vector2(facing, 0);
     }
-    private bool HitWeakPoint(Vector2 direction, TileData tileData)
+    public bool HitWeakPoint(Vector2 direction, WeakPointDirection weakDir)
     {
-        if (tileData == null || !tileData.hasWeakPoint)
+        if (weakDir == WeakPointDirection.None)
             return false;
 
-        switch (tileData.weakPointDirection)
+        switch (weakDir)
         {
             case WeakPointDirection.Left:  return direction.x < 0;
             case WeakPointDirection.Right: return direction.x > 0;
@@ -482,8 +402,118 @@ public class PlayerMiningController : MonoBehaviour
         return false;
     }
 
+    public bool TryGetTargetCell(out Vector3Int cellPos, out Tilemap tilemap)
+    {
+        tilemap = mineTilemap;
+        cellPos = Vector3Int.zero;
 
+        if (tilemap == null)
+            return false;
 
+        Vector2 direction = GetMiningDirection();
+        Vector3 originWorld = mineOrigin.position;
+
+        // Convert origin to starting cell
+        Vector3Int startCell = tilemap.WorldToCell(originWorld);
+
+        // How many tiles to step based on mineRange
+        int maxSteps = Mathf.CeilToInt(mineRange);
+
+        // Step direction in grid space
+        Vector3Int step = new Vector3Int(
+            Mathf.RoundToInt(direction.x),
+            Mathf.RoundToInt(direction.y),
+            0
+        );
+
+        Vector3Int current = startCell;
+
+        for (int i = 0; i < maxSteps; i++)
+        {
+            current += step;
+
+            TileBase tile = tilemap.GetTile(current);
+            if (tile != null)
+            {
+                cellPos = current;
+                return true;
+            }
+        }
+
+        return false;
+    }
+    private void OnDrawGizmos()
+    {
+        if (!showMiningGizmos || mineTilemap == null || mineOrigin == null)
+            return;
+
+        Vector2 direction = GetMiningDirection();
+        Vector3 origin = mineOrigin.position;
+
+        // -----------------------------------------
+        // 1. Mining direction line
+        // -----------------------------------------
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(origin, origin + (Vector3)direction * mineRange);
+
+        // -----------------------------------------
+        // 2. Target cell highlight
+        // -----------------------------------------
+        if (Application.isPlaying)
+        {
+            if (TryGetTargetCell(out Vector3Int cellPos, out Tilemap tilemap))
+            {
+                Vector3 cellCenter = tilemap.GetCellCenterWorld(cellPos);
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(cellCenter, Vector3.one * 0.9f);
+            }
+        }
+
+        // -----------------------------------------
+        // 3. Hammer AoE radius
+        // -----------------------------------------
+        if (toolManager != null && toolManager.CurrentTool.mode == ToolMode.Hammer)
+        {
+            if (Application.isPlaying && TryGetTargetCell(out Vector3Int hammerCell, out Tilemap tilemap))
+            {
+                Vector3 center = tilemap.GetCellCenterWorld(hammerCell);
+                Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
+                Gizmos.DrawWireSphere(center, hammerRadius + 0.5f);
+            }
+        }
+
+        // -----------------------------------------
+        // 4. Wide Swing arc
+        // -----------------------------------------
+        if (toolManager != null && toolManager.CurrentTool.mode == ToolMode.WideSwing)
+        {
+            DrawSwingArc(origin, direction, swingRange, swingAngle);
+        }
+    }
+    private void DrawSwingArc(Vector3 origin, Vector2 direction, float range, float angle)
+    {
+        Gizmos.color = new Color(0f, 0.7f, 1f, 0.4f);
+
+        int segments = 30;
+        float halfAngle = angle * 0.5f;
+        float startAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - halfAngle;
+
+        Vector3 prevPoint = origin;
+
+        for (int i = 0; i <= segments; i++)
+        {
+            float t = (float)i / segments;
+            float currentAngle = startAngle + t * angle;
+            float rad = currentAngle * Mathf.Deg2Rad;
+
+            Vector3 nextPoint = origin + new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0) * range;
+
+            if (i > 0)
+                Gizmos.DrawLine(prevPoint, nextPoint);
+
+            prevPoint = nextPoint;
+        }
+    }
 
     void OnDrawGizmosSelected()
     {

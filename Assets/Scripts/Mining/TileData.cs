@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class TileData : MonoBehaviour
 {
@@ -8,3 +8,4 @@ public class TileData : MonoBehaviour
     public WeakPointDirection weakPointDirection = WeakPointDirection.None;
     public bool hasWeakPoint => weakPointDirection != WeakPointDirection.None;
 }
+*/
