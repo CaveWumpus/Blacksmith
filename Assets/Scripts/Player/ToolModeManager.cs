@@ -31,24 +31,21 @@ public class ToolModeManager : MonoBehaviour
 
         if (input.toolPrevPressed)
             PreviousTool();
-
-
     }
 
     public void NextTool()
     {
-        // TODO: play swap sound, flash UI, show icon
-
         currentIndex++;
         if (currentIndex >= toolModes.Length)
             currentIndex = 0;
 
+        ApplyToolDefinition();
+
         Debug.Log("Switched to tool: " + CurrentTool.mode);
+
         var mining = Object.FindFirstObjectByType<PlayerMiningController>();
         if (mining != null)
             mining.ResetDrillTimer();
-
-
     }
 
     public void PreviousTool()
@@ -57,13 +54,15 @@ public class ToolModeManager : MonoBehaviour
         if (currentIndex < 0)
             currentIndex = toolModes.Length - 1;
 
+        ApplyToolDefinition();
+
         Debug.Log("Switched to tool: " + CurrentTool.mode);
+
         var mining = Object.FindFirstObjectByType<PlayerMiningController>();
         if (mining != null)
             mining.ResetDrillTimer();
-
-
     }
+
     public bool IsAbilityUnlocked(ToolMode tool, int abilityIndex)
     {
         var state = ToolXPManager.Instance.GetState(tool);
@@ -79,6 +78,16 @@ public class ToolModeManager : MonoBehaviour
     {
         currentLevelIndex = Mathf.Clamp(level, 0, CurrentTool.levels.Length - 1);
     }
+    private void ApplyToolDefinition()
+    {
+        auraProfile = CurrentTool.auraProfile;
+        currentLevelIndex = 0;
+
+        // If this tool is a drill level, reset its heat
+        if (CurrentLevel is Drill_Level1_Overheat drill1)
+            drill1.ResetHeat();
+    }
+
 
     void OnGUI()
     {

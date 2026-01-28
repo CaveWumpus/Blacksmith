@@ -26,14 +26,16 @@ public class ChargeAuraController : MonoBehaviour
 
     public void SetProfile(AuraProfile newProfile)
     {
+        Debug.Log("Aura profile set to: " + newProfile.name);
+
         profile = newProfile;
         currentValue = 0f;
         inSweet = false;
         inPerfect = false;
-
+        Debug.Log("Aura profile set to: " + newProfile.name);
         if (resetRoutine != null)
             StopCoroutine(resetRoutine);
-
+        Debug.Log("Aura profile set to: " + newProfile.name);
         SetInstant(baseScale, profile.idleColor);
     }
 
@@ -151,7 +153,7 @@ public class ChargeAuraController : MonoBehaviour
         );
     }
 
-    private void SetInstant(float scale, Color color)
+    public void SetInstant(float scale, Color color)
     {
         outlineRenderer.transform.localScale = Vector3.one * scale;
         outlineRenderer.color = color;

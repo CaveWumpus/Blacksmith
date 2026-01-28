@@ -85,9 +85,20 @@ public class PlayerMiningController : MonoBehaviour
 
 
         // DRILL continuous mining
-        if (toolManager.CurrentTool.mode == ToolMode.Drill && input.mineHeld)
+        if (toolManager.CurrentTool.mode == ToolMode.Drill)
         {
-            PerformDrill();
+            if (input.mineHeld)
+                PerformDrill();
+        }
+        
+
+        // Cool drill heat when not drilling
+        if (toolManager.CurrentLevel is Drill_Level1_Overheat drill1)
+        {
+            if (!input.mineHeld)
+                drill1.CoolDown(Time.deltaTime);
+
+            Debug.Log("Heat (frame): " + drill1.DebugHeat + " mineHeld=" + input.mineHeld);
         }
 
         
@@ -98,21 +109,24 @@ public class PlayerMiningController : MonoBehaviour
         // -----------------------------
         // HOLD-TO-MINE INPUT HANDLING
         // -----------------------------
-        if (holdToMineEnabled)
+        // Only charge if the tool actually uses charging
+        bool toolUsesCharge = toolManager.CurrentTool.mode != ToolMode.Drill;
+
+        if (holdToMineEnabled && toolUsesCharge)
         {
-            // Start charging
             if (input.mineStarted)
             {
                 isCharging = true;
                 currentCharge = 0f;
 
-                // NEW: set aura profile for this tool
-                aura.SetProfile(toolManager.CurrentTool.auraProfile);
+                if (toolUsesCharge)
+                    aura.SetProfile(toolManager.auraProfile);
+                else
+                    aura.SetInstant(aura.baseScale, toolManager.auraProfile.idleColor);
+
                 aura.OnChargeStart();
             }
 
-
-            // Continue charging
             if (isCharging && input.mineHeld)
             {
                 float speed = toolManager.CurrentTool.chargeSpeedMultiplier;
@@ -122,27 +136,14 @@ public class PlayerMiningController : MonoBehaviour
                 float normalized = currentCharge / maxChargeTime;
                 aura.UpdateCharge(normalized);
             }
+            
 
 
-            if (chargeBarUI != null && holdToMineEnabled)
-            {
-                float normalized = maxChargeTime > 0f 
-                    ? currentCharge / maxChargeTime 
-                    : 0f;
-
-                chargeBarUI.SetCharge(normalized);
-            }
-            //Debug.Log($"Started:{input.mineStarted} Held:{input.mineHeld} Released:{input.mineReleased}");
-
-
-            // Release charge
             if (input.mineReleased)
             {
                 bool wasSweet, wasPerfect;
                 aura.OnChargeEnd(out wasSweet, out wasPerfect);
-
                 ReleaseMiningCharge(wasSweet, wasPerfect);
-
             }
         }
         
@@ -311,10 +312,15 @@ public class PlayerMiningController : MonoBehaviour
     // ---------------------------------------------------------
     private void PerformDrill()
     {
-        // Tick timer
+        //Debug.Log("PerformDrill tick");
+        //Debug.Log("TileDurabilityManager.Instance = " + TileDurabilityManager.Instance);
+        if (!input.mineHeld)
+            return;
+
         drillTimer -= Time.deltaTime;
         if (drillTimer > 0f)
             return;
+
 
         drillTimer = drillTickRate;
 
@@ -325,22 +331,20 @@ public class PlayerMiningController : MonoBehaviour
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null)
             return;
+        //Debug.Log("Target tile: " + tile + " at " + cellPos);
 
         // Lookup tile definition
         TileDefinition def;
         if (!TileDurabilityManager.Instance.TryGetDefinition(tile, out def))
+        {
+            Debug.Log("No TileDefinition for tile: " + tile.name);
             return;
+        }
 
-        // Drill damage ignores weak points (for now)
-        int damage = drillDamage - 1;
+        //Debug.Log("Calling level: " + toolManager.CurrentLevel);
 
-        // Flash effect
-        var flash = tilemap.GetComponent<TileFlashEffect>();
-        if (flash != null)
-            flash.FlashTile(cellPos);
-
-        // Apply damage
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, damage);
+        int finalDamage = toolManager.CurrentTool.baseDamage;
+        toolManager.CurrentLevel.PerformMining(this, cellPos, tilemap, finalDamage);
     }
 
     public void ResetDrillTimer()

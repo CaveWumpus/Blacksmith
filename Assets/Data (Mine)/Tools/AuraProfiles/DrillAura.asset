@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e4ca24257caa5c4c807f5e7587ff499, type: 3}
   m_Name: DrillAura
   m_EditorClassIdentifier: Assembly-CSharp::AuraProfile
-  sweetStart: 3
-  sweetEnd: 4
+  sweetStart: 0.4
+  sweetEnd: 0.6
   usePerfectWindow: 0
-  perfectStart: 3.8
-  perfectEnd: 3.9
+  perfectStart: 0.5
+  perfectEnd: 0.55
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   sweetColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   perfectColor: {r: 1, g: 1, b: 0.4, a: 1}
