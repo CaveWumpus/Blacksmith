@@ -54,6 +54,8 @@ public class PlayerMiningController : MonoBehaviour
     [Header("Debug Gizmos")]
     public bool showMiningGizmos = true;
 
+    [Header("Aura")]
+    public ChargeAuraController aura;
 
     public static PlayerMiningController Instance { get; private set; }
 
@@ -103,7 +105,12 @@ public class PlayerMiningController : MonoBehaviour
             {
                 isCharging = true;
                 currentCharge = 0f;
+
+                // NEW: set aura profile for this tool
+                aura.SetProfile(toolManager.CurrentTool.auraProfile);
+                aura.OnChargeStart();
             }
+
 
             // Continue charging
             if (isCharging && input.mineHeld)
@@ -111,7 +118,11 @@ public class PlayerMiningController : MonoBehaviour
                 float speed = toolManager.CurrentTool.chargeSpeedMultiplier;
                 currentCharge += Time.deltaTime * speed;
                 currentCharge = Mathf.Clamp(currentCharge, 0f, maxChargeTime);
+
+                float normalized = currentCharge / maxChargeTime;
+                aura.UpdateCharge(normalized);
             }
+
 
             if (chargeBarUI != null && holdToMineEnabled)
             {
@@ -127,7 +138,11 @@ public class PlayerMiningController : MonoBehaviour
             // Release charge
             if (input.mineReleased)
             {
-                ReleaseMiningCharge();
+                bool wasSweet, wasPerfect;
+                aura.OnChargeEnd(out wasSweet, out wasPerfect);
+
+                ReleaseMiningCharge(wasSweet, wasPerfect);
+
             }
         }
         
@@ -136,7 +151,7 @@ public class PlayerMiningController : MonoBehaviour
     // ---------------------------------------------------------
     // HOLD-TO-MINE RELEASE LOGIC
     // ---------------------------------------------------------
-    private void ReleaseMiningCharge()
+    private void ReleaseMiningCharge(bool wasSweet, bool wasPerfect)
     {
         if (!isCharging)
             return;
@@ -150,7 +165,7 @@ public class PlayerMiningController : MonoBehaviour
         float chargePercent = currentCharge / maxChargeTime;
         float chargeMultiplier = chargeCurve.Evaluate(chargePercent);
 
-        PerformChargedMine(chargeMultiplier);
+        PerformChargedMine(chargeMultiplier, wasSweet, wasPerfect);
 
         // Reset charge
         currentCharge = 0f;
@@ -159,25 +174,32 @@ public class PlayerMiningController : MonoBehaviour
     // ---------------------------------------------------------
     // CHARGED MINING HIT
     // ---------------------------------------------------------
-    private void PerformChargedMine(float chargeMultiplier)
+    private void PerformChargedMine(float chargeMultiplier, bool wasSweet, bool wasPerfect)
     {
         if (!TryGetTargetCell(out Vector3Int cellPos, out Tilemap tilemap))
             return;
         Debug.Log("Using tool: " + toolManager.CurrentTool.name);
 
-        toolManager.CurrentLevel.PerformMining(this, cellPos, tilemap, chargeMultiplier);
+        int finalDamage = ComputeBaseDamage(chargeMultiplier, wasSweet, wasPerfect);
+        toolManager.CurrentLevel.PerformMining(this, cellPos, tilemap, finalDamage);
+
     }
 
-    public int ComputeBaseDamage(float chargeMultiplier)
+    public int ComputeBaseDamage(float chargeMultiplier, bool wasSweet, bool wasPerfect)
     {
         var tool = toolManager.CurrentTool;
 
-        if (tool.overrideDamage)
-            return tool.debugDamageValue;
-
         float scaled = tool.baseDamage * chargeMultiplier * tool.damageMultiplier;
+
+        if (wasSweet)
+            scaled *= tool.sweetSpotBonus;   // e.g. 1.2f
+
+        if (wasPerfect)
+            scaled *= tool.perfectSpotBonus; // e.g. 1.4f
+
         return Mathf.Max(1, Mathf.RoundToInt(scaled));
     }
+
 
     private void PerformWeakSpotChain(Tilemap tilemap, Vector3Int startCell, Vector2 direction, int initialDamage)
     {
@@ -248,7 +270,7 @@ public class PlayerMiningController : MonoBehaviour
     // ---------------------------------------------------------
     // ARC SELECTION FOR WIDE SWING
     // ---------------------------------------------------------
-    private List<Vector3Int> GetTilesInArc(
+    public List<Vector3Int> GetTilesInArc(
     Vector2 origin, Vector2 direction, float range, float angle)
     {
         var results = new List<Vector3Int>();

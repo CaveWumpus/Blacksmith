@@ -12,6 +12,10 @@ public class ToolModeManager : MonoBehaviour
     [Header("Input")]
     public PlayerInputHandler input;
 
+    public float sweetSpotBonus = 1.2f;
+    public float perfectSpotBonus = 1.4f;
+    public AuraProfile auraProfile;
+
     public int currentLevelIndex = 0;
     public ToolLevelBehaviour CurrentLevel => CurrentTool.levels[currentLevelIndex];
 

@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: Drill
   m_EditorClassIdentifier: Assembly-CSharp::ToolModeDefinition
   mode: 2
+  levels: []
+  baseDamage: 1
+  auraProfile: {fileID: 11400000, guid: 2189075c8b855c640877826430ecc516, type: 2}
+  sweetSpotBonus: 1.2
+  perfectSpotBonus: 1.4
   chargeSpeedMultiplier: 1.5
   damageMultiplier: 0.4
   weakPointBonus: 0
@@ -20,3 +25,5 @@ MonoBehaviour:
   staminaCost: 0
   hitVFX: {fileID: 0}
   hitSFX: {fileID: 0}
+  overrideDamage: 0
+  debugDamageValue: 1

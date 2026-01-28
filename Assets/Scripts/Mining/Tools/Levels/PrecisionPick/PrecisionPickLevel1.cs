@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [CreateAssetMenu(menuName = "Tools/PrecisionPick/Level2")]
@@ -8,7 +8,8 @@ public class PrecisionPickLevel2 : ToolLevelBehaviour
         PlayerMiningController controller,
         Vector3Int cellPos,
         Tilemap tilemap,
-        float chargeMultiplier)
+        int finalDamage)
+
     {
         // Step 1: Do Level 1 damage
         TileBase tile = tilemap.GetTile(cellPos);
@@ -18,8 +19,6 @@ public class PrecisionPickLevel2 : ToolLevelBehaviour
         TileDefinition def;
         if (!TileDurabilityManager.Instance.TryGetDefinition(tile, out def))
             return;
-
-        int finalDamage = controller.ComputeBaseDamage(chargeMultiplier);
 
         TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
 
@@ -55,4 +54,4 @@ public class PrecisionPickLevel2 : ToolLevelBehaviour
         }
     }
 }
-
+*/

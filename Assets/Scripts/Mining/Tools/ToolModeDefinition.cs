@@ -12,6 +12,12 @@ public class ToolModeDefinition : ScriptableObject
     [Header("Damage")]
     public int baseDamage = 1;
 
+    public AuraProfile auraProfile;
+
+    [Header("Sweet Spot Bonuses")]
+    public float sweetSpotBonus = 1.2f;
+    public float perfectSpotBonus = 1.4f;
+
     [Header("Charge Behavior")]
     public float chargeSpeedMultiplier = 1f;   // 1 = normal, <1 = slower, >1 = faster
     public float damageMultiplier = 1f;        // base damage scaling

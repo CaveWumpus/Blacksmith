@@ -13,21 +13,26 @@ public class PrecisionPick_Level3_Shatter : ToolLevelBehaviour
         PlayerMiningController controller,
         Vector3Int cellPos,
         Tilemap tilemap,
-        float chargeMultiplier)
+        int finalDamage)
+
     {
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null)
             return;
 
-        int damage = controller.ComputeBaseDamage(chargeMultiplier);
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, damage - 1);
 
-        // Weak spot check
+        // Weak spot check FIRST
         Vector2 direction = controller.GetMiningDirection();
         WeakPointDirection weakDir = TileDurabilityManager.Instance.GetWeakPoint(cellPos);
-        DualTileDebugHelper.RecordHitTile(cellPos, weakDir, controller.HitWeakPoint(direction, weakDir));
+        bool hitWeak = controller.HitWeakPoint(direction, weakDir);
 
-        if (!controller.HitWeakPoint(direction, weakDir))
+        // (optional debug)
+        Debug.Log($"[SHATTER DEBUG] cell={cellPos}, weakDir={weakDir}, mineDir={direction}, hitWeak={hitWeak}");
+
+        // Now apply damage
+        TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
+
+        if (!hitWeak)
             return;
 
         // Directional AoE
@@ -43,11 +48,9 @@ public class PrecisionPick_Level3_Shatter : ToolLevelBehaviour
             {
                 Vector3Int offset = new Vector3Int(x, y, 0);
                 Vector3Int target = cellPos + offset;
-                Debug.Log("Shatter: Applying damage to " + cellPos);
 
                 if (directionalOnly)
                 {
-                    // Only damage tiles in front of the hit
                     if (Vector3.Dot(offset, dir) <= 0)
                         continue;
                 }
@@ -57,10 +60,11 @@ public class PrecisionPick_Level3_Shatter : ToolLevelBehaviour
                     continue;
 
                 float dist = offset.magnitude;
-                int dmgToApply = Mathf.Max(1, Mathf.RoundToInt(damage * Mathf.Pow(falloff, dist)));
+                int dmgToApply = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Mathf.Pow(falloff, dist)));
 
                 TileDurabilityManager.Instance.Damage(target, tilemap, dmgToApply - 1);
             }
         }
     }
+
 }

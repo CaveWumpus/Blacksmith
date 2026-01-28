@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: Hammer
   m_EditorClassIdentifier: Assembly-CSharp::ToolModeDefinition
   mode: 3
+  levels: []
+  baseDamage: 1
+  auraProfile: {fileID: 11400000, guid: 06fdb45a425234641a681f52f395ffce, type: 2}
+  sweetSpotBonus: 1.2
+  perfectSpotBonus: 1.4
   chargeSpeedMultiplier: 0.5
   damageMultiplier: 2
   weakPointBonus: 0
@@ -20,3 +25,5 @@ MonoBehaviour:
   staminaCost: 0
   hitVFX: {fileID: 0}
   hitSFX: {fileID: 0}
+  overrideDamage: 0
+  debugDamageValue: 1

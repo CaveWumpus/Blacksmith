@@ -121,10 +121,10 @@ public class TileDurabilityManager : MonoBehaviour
         float dmgMult = RelicEffectResolver.GetMiningDamageMultiplier();
         durabilityMap[cellPos] -= Mathf.RoundToInt((1 + bonusDamage) * dmgMult);
 
-        if (!durabilityMap.ContainsKey(cellPos))
-            return;
+        //if (!durabilityMap.ContainsKey(cellPos))
+           //return;
 
-        durabilityMap[cellPos] -= (1 + bonusDamage);
+        //durabilityMap[cellPos] -= (1 + bonusDamage);
 
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null) return;

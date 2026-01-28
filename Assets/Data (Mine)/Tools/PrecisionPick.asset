@@ -17,9 +17,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 696ec01bfb1a9e345866285dadc1869a, type: 2}
   - {fileID: 11400000, guid: f6b2ddf693f31e34c8a40edc42a1eb61, type: 2}
   - {fileID: 11400000, guid: 832a1774d7aba214b93f02bc16b4aae3, type: 2}
-  baseDamage: 4
+  baseDamage: 2
+  auraProfile: {fileID: 11400000, guid: c3c09384a2e09b6439526b480cf3cbe0, type: 2}
+  sweetSpotBonus: 1.2
+  perfectSpotBonus: 1.4
   chargeSpeedMultiplier: 0.7
-  damageMultiplier: 10
+  damageMultiplier: 2
   weakPointBonus: 1
   aoeRadius: 0
   staminaCost: 0

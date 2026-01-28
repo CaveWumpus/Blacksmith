@@ -14,25 +14,27 @@ public class PrecisionPick_Level2_Crit : ToolLevelBehaviour
         PlayerMiningController controller,
         Vector3Int cellPos,
         Tilemap tilemap,
-        float chargeMultiplier)
+        int finalDamage)
     {
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null)
             return;
 
-        int damage = controller.ComputeBaseDamage(chargeMultiplier);
-
-        // Weak spot check
+        // ⭐ Weak spot check FIRST
         Vector2 direction = controller.GetMiningDirection();
         WeakPointDirection weakDir = TileDurabilityManager.Instance.GetWeakPoint(cellPos);
         bool hitWeak = controller.HitWeakPoint(direction, weakDir);
-        DualTileDebugHelper.RecordHitTile(cellPos, weakDir, controller.HitWeakPoint(direction, weakDir));
 
-        int finalDamage = hitWeak
-            ? Mathf.RoundToInt(damage * critMultiplier)
-            : damage;
+        DualTileDebugHelper.RecordHitTile(cellPos, weakDir, hitWeak);
 
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
+        // finalDamage already includes sweet/perfect bonuses
+        // and the crit multiplier is applied here
+        int critDamage = hitWeak
+            ? Mathf.RoundToInt(finalDamage * critMultiplier)
+            : finalDamage;
+
+        TileDurabilityManager.Instance.Damage(cellPos, tilemap, critDamage - 1);
+
 
         if (!hitWeak)
             return;

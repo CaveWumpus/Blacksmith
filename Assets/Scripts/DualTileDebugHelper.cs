@@ -37,6 +37,8 @@ public class DualTileDebugHelper : MonoBehaviour
 
     void OnGUI()
     {
+        //Debug.Log("DEBUG GUI READ: " + DualTileDebugHelper.lastHitCell);
+
         GUI.color = Color.white;
         GUILayout.BeginArea(new Rect(10, 10, 350, 200), GUI.skin.box);
 
@@ -60,7 +62,7 @@ public class DualTileDebugHelper : MonoBehaviour
         GUILayout.Space(10);
         bool match = (lookCell == DualTileDebugHelper.lastHitCell);
         GUILayout.Label("<b>Tiles Match:</b> " + match);
-
+        
         GUILayout.EndArea();
     }
 
@@ -68,6 +70,7 @@ public class DualTileDebugHelper : MonoBehaviour
     // Called by tool levels to record the actual hit tile
     public static void RecordHitTile(Vector3Int cell, WeakPointDirection weakDir, bool hitWeak)
     {
+        //Debug.Log("RecordHitTile CALLED for " + cell);
         lastHitCell = cell;
         lastHitWeakDir = weakDir;
         lastHitWeak = hitWeak;

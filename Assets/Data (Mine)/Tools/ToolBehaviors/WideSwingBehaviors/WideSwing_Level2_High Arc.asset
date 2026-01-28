@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c866e8cac1d7b04aa1d45facf04c3dc, type: 3}
+  m_Name: WideSwing_Level2_High Arc
+  m_EditorClassIdentifier: Assembly-CSharp::WideSwing_Level2_HighArc
+  arcAngle: 90
+  arcRange: 2.5
+  maxTilesHit: 4

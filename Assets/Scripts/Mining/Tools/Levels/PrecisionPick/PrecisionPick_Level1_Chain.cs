@@ -12,26 +12,28 @@ public class PrecisionPick_Level1_Chain : ToolLevelBehaviour
         PlayerMiningController controller,
         Vector3Int cellPos,
         Tilemap tilemap,
-        float chargeMultiplier)
+        int finalDamage)
     {
         TileBase tile = tilemap.GetTile(cellPos);
         if (tile == null)
             return;
 
-        int damage = controller.ComputeBaseDamage(chargeMultiplier);
-        TileDurabilityManager.Instance.Damage(cellPos, tilemap, damage - 1);
-
-        // Weak spot check
+        // ⭐ Weak spot check FIRST
         Vector2 direction = controller.GetMiningDirection();
         WeakPointDirection weakDir = TileDurabilityManager.Instance.GetWeakPoint(cellPos);
-        DualTileDebugHelper.RecordHitTile(cellPos, weakDir, controller.HitWeakPoint(direction, weakDir));
+        bool hitWeak = controller.HitWeakPoint(direction, weakDir);
 
-        if (!controller.HitWeakPoint(direction, weakDir))
+        DualTileDebugHelper.RecordHitTile(cellPos, weakDir, hitWeak);
+
+        // ⭐ Now apply damage
+        TileDurabilityManager.Instance.Damage(cellPos, tilemap, finalDamage - 1);
+
+        if (!hitWeak)
             return;
 
         // Chain forward
         Vector3Int current = cellPos;
-        float currentDamage = damage;
+        float currentDamage = finalDamage;
 
         for (int i = 0; i < chainLength; i++)
         {
@@ -52,3 +54,4 @@ public class PrecisionPick_Level1_Chain : ToolLevelBehaviour
         }
     }
 }
+

@@ -7,6 +7,5 @@ public abstract class ToolLevelBehaviour : ScriptableObject
         PlayerMiningController controller,
         Vector3Int cellPos,
         Tilemap tilemap,
-        float chargeMultiplier
-    );
+        int finalDamage);
 }

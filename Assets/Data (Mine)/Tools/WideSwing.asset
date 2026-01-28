@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: WideSwing
   m_EditorClassIdentifier: Assembly-CSharp::ToolModeDefinition
   mode: 1
+  levels:
+  - {fileID: 11400000, guid: 388df5565489c094e90754364981592f, type: 2}
+  - {fileID: 11400000, guid: 5e2cb0d01102ab141be34089782f1b8e, type: 2}
+  - {fileID: 11400000, guid: 39a97b615aae40148bd2fac72da7fab6, type: 2}
+  baseDamage: 4
+  auraProfile: {fileID: 11400000, guid: 15ad24619c1688241914ff136a392d93, type: 2}
+  sweetSpotBonus: 1.2
+  perfectSpotBonus: 1.4
   chargeSpeedMultiplier: 1
   damageMultiplier: 0.8
   weakPointBonus: 0
@@ -20,3 +28,5 @@ MonoBehaviour:
   staminaCost: 0
   hitVFX: {fileID: 0}
   hitSFX: {fileID: 0}
+  overrideDamage: 0
+  debugDamageValue: 1
